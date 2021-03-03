@@ -11,9 +11,18 @@ th {
 
 table {
   text-align: center !important;
-  margin: auto i !important;
+  margin: auto !important;
+  margin-top: auto;
 }
 
 th:nth-child(1), td:nth-child(1) {
   display: none;
+}
+
+td:nth-child(2) {
+  font-weight: bolder;
+}
+
+td:last-child {
+  font-weight: bolder;
 }
