@@ -392,7 +392,7 @@ def index():
         
         return tabellSort
     
-    result = render_template('main_page.html', tables=[getTabell().to_html(classes="table table-dark table-borderless", table_id="test", border="1")])
+    result = render_template('main_page.html', tables=[getTabell().to_html(classes="table table-dark table-borderless", table_id="test", border="0")])
     
     return result
 
