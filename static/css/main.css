@@ -11,6 +11,7 @@ th {
 
 table {
   text-align: center !important;
+  margin: auto i !important;
 }
 
 th:nth-child(1), td:nth-child(1) {
