@@ -1,5 +1,9 @@
 html {
-  background-color: #212529;
+  background-color: #212529 !important;
+}
+
+body {
+  background-color: #212529 !important;
 }
 th {
   text-transform:uppercase;
@@ -7,6 +11,14 @@ th {
   background-color: rgba(255, 255, 55, 100) !important;
   color: black;
  
+}
+
+h1 {
+  color: white;
+}
+
+p {
+  color:  white;
 }
 
 table {

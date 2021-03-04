@@ -27,6 +27,14 @@ def getBootstrapTeams():
 
 teams = getBootstrapTeams()
 
+def getBootstrapNames():
+    url2 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+    r2 = requests.get(url2)
+    json2 = r2.json()
+    return pd.DataFrame(json2['elements']).set_index('id')
+
+names = getBootstrapNames()
+
 
 @app.route("/")
 def index():
@@ -392,7 +400,7 @@ def index():
         
         return tabellSort
     
-    result = render_template('main_page.html', tables=[getTabell().to_html(classes="table table-dark table-borderless", table_id="test", border="0")])
+    result = render_template('main_page.html', tables=[getTabell().to_html(classes="table table-dark table-borderless table-striped", table_id="test", border="0")])
     
     return result
 
@@ -463,8 +471,322 @@ def vinnere():
         result.columns = ['GW', 'Vinner', 'Poeng']
         return result
     
-    result = render_template('vinnere.html', tables=[getWinners().to_html(classes="table table-dark table-borderless", border=0)])
+    result = render_template('vinnere.html', tables=[getWinners().to_html(classes="table table-dark table-borderless table-striped", border=0)])
 
+    return result
+
+@app.route("/lag")
+def lag():
+    def checkGameweek():
+        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+        r3 = requests.get(url3)
+        json = r3.json()
+        gameweek_df = pd.DataFrame(json['events'])
+        iscurrent = gameweek_df[['id', 'is_current']]
+        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
+        return currentGw
+
+    thisGw = checkGameweek()
+
+    def getGwFixtures():
+        url2 = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
+        r2 = requests.get(url2)
+        json2 = r2.json()
+        fixtures_df = pd.DataFrame(json2)
+        
+        hfixtures = fixtures_df[['team_h', 'finished_provisional']]
+
+        aFixtures = fixtures_df[['team_a', 'finished_provisional']]
+        aFixtures.columns = ['team_h', 'finished_provisional']
+        
+        allFix = hfixtures.append(aFixtures)
+        allFix.set_index('team_h', inplace = True)
+        return allFix
+
+    allFix = getGwFixtures()
+
+    def getMinutesPlayed():
+        url1 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
+        r1 = requests.get(url1)
+        json1 = r1.json()
+        liveElements_df = pd.DataFrame(json1['elements'])
+        ids = liveElements_df['id']
+        stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
+        minutes = pd.DataFrame(stats_df['minutes'])
+
+        minutes.insert(0, 'id', ids, True)
+
+        minutes.set_index('id', inplace = True)
+        return minutes
+
+    minutes = getMinutesPlayed()
+
+    def getPlayerName(playerID):
+        return names.at[playerID, 'web_name']
+
+    def didNotPlay(playerId):
+        teamId = teams.at[playerId, 'team']
+        try:
+            return minutes.at[playerId, 'minutes'] == 0 and all(allFix.at[teamId, 'finished_provisional'])
+        except:
+            try:
+                return minutes.at[playerId, 'minutes'] == 0 and allFix.at[teamId, 'finished_provisional']
+            except:
+                return True
+    
+    def getAutoSubs(teamId):   
+        url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
+        r4 = requests.get(url4)
+        json4 = r4.json()
+        picks_df = pd.DataFrame(json4['picks'])
+
+        spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
+        
+        spillerListe = spillerListeOrg.copy()
+
+        minDef = 3
+        minMid = 2
+        minAtt = 1
+
+        countGk = 0
+        countDef = 0
+        countMid = 0
+        countAtt = 0
+
+        gk = 1
+        defs = 2
+        mids = 3
+        atts = 4
+
+        keeperbytte = spillerListe.iat[11, 0]
+
+        for obj in spillerListe['element'][0:11]:
+            starter = obj
+            spillerpos = teams.at[starter, 'element_type']
+            spilteIkke = didNotPlay(starter)
+
+            if not spilteIkke:
+                if spillerpos == gk:
+                    countGk += 1
+                if spillerpos == defs:
+                    countDef += 1
+                if spillerpos == mids:
+                    countMid += 1
+                if spillerpos == atts:
+                    countAtt += 1
+
+        for i in range(len(spillerListe[0:11])):
+            if (countGk + countDef + countMid + countAtt) == 11:
+                break
+            
+            starter = spillerListe.iat[i,0]
+            spilteIkke = didNotPlay(starter)
+            spillerpos = teams.at[starter, 'element_type']
+
+            erKaptein = spillerListe.iat[i, 2]
+
+            # sjekke kaptein
+            if spilteIkke and erKaptein:
+                spillerListe.loc[spillerListe['is_vice_captain'] == True, 'multiplier'] = spillerListe.iat[i, 1]
+                spillerListe.iat[i, 1] = 0
+
+            # keeperbytte
+            if spillerpos == gk and spilteIkke:
+                spillerListe.iat[i,1] = 0
+                if not didNotPlay(keeperbytte):
+                    spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
+                    spillerListe.iat[i,1] = 1
+                    countGk += 1
+                else:
+                    countGk += 1
+                    
+            # bytte fra benken
+            if spillerpos != gk and spilteIkke:
+                
+                spillerListe.iat[i,1] = 0
+                byttet = False
+
+                for j in range (len(spillerListe[12:15])):
+                    if didNotPlay(spillerListe[12:15].iat[j,0]):
+                        continue
+                    
+                    innbytterPos = teams.at[spillerListe[12:15].iat[j,0], 'element_type']
+
+                    if countDef >= minDef and countMid >= minMid and countAtt >= minAtt:
+                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
+                        spillerListe.iat[i,1] = 1
+
+                        if innbytterPos == defs:
+                            countDef += 1
+                        if innbytterPos == mids:
+                            countMid += 1
+                        if innbytterPos == atts:
+                            countAtt += 1
+                        byttet = True
+                        break           
+                            
+                    if countDef < minDef and innbytterPos == defs:
+                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                        spillerListe.iat[i,1] = 1
+                        countDef += 1
+                        byttet = True
+                        break
+
+                    if countMid < minMid and innbytterPos == mids:
+                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                        spillerListe.iat[i,1] = 1
+                        countMid += 1
+                        byttet = True
+                        break
+
+                    if countAtt < minAtt and innbytterPos == atts:
+                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                        spillerListe.iat[i,1] = 1
+                        countAtt += 1
+                        byttet = True
+                        break
+                    
+                if byttet == False:
+                    if spillerpos == defs:
+                        countDef += 1
+                    if spillerpos == mids:
+                        countMid += 1
+                    if spillerpos == atts:
+                        countAtt += 1
+
+        navn = []
+        for spiller in spillerListe['element']:
+            navn.append(getPlayerName(spiller))
+
+        spillerListe = spillerListe[0:15][['element', 'multiplier']]
+        spillerListe['navn'] = navn
+        
+        return spillerListe
+
+    def getBonusLists():
+        liste = []
+        elements = pd.DataFrame()
+        url = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
+        r = requests.get(url)
+        json = r.json()
+        fixtures_df = pd.DataFrame(json)
+        
+        now = datetime.utcnow()
+        for i in range (len(fixtures_df)):
+            gameStart = fixtures_df.at[i, 'kickoff_time']
+            gameStart = datetime.strptime(gameStart, "%Y-%m-%dT%H:%M:%SZ")
+            played60 = gameStart + timedelta(minutes = 79)
+            if now > played60:
+                try:
+                    stats_df = pd.DataFrame(fixtures_df['stats'].iloc[i])
+                    stats_a = pd.DataFrame(stats_df.loc[9,'a'])
+                    stats_h = pd.DataFrame(stats_df.loc[9,'h'])
+                    samlet = stats_a.append(stats_h)
+                    sort = samlet.sort_values(by=['value'], ascending=False)
+                    ferdig = sort.reset_index(drop=True)
+                    bps = ferdig[0:8].copy()
+                    elements = elements.append(bps, ignore_index = True, sort = False)
+                    
+                    first = False
+                    second = False
+                    third = False
+                    count = 0
+                    for j in range(len(bps)):
+                        if first == False:
+                            try:
+                                if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                    liste.append(3)
+                                    count += 1
+                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                    liste.append(3)
+                                    count += 1
+                                    first = True
+                            except:
+                                pass
+
+                        elif second == False and count <= 1:
+                            try:
+                                if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                    liste.append(2)
+                                    count -= 1
+                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                    liste.append(2)
+                                    count += 1
+                                    second = True
+                            except:
+                                pass
+
+                        elif third == False and count == 2:
+                            try:
+                                if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                    liste.append(1)
+                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                    liste.append(1)
+                                    third = True
+                            except:
+                                pass
+                        else:
+                            liste.append(0)
+                except:
+                    pass
+        try:
+            elements['bonus'] = liste
+            return elements.set_index('element', inplace=False)['bonus']
+        except:
+            return []
+
+    bonuspoints = getBonusLists()
+
+    def getLiveBonusList(teamId):
+        picks = getAutoSubs(teamId)
+        bonusPoeng = []
+        for ids in picks['element']:
+            try:
+                bonusPoeng.append(sum(bonuspoints.at[ids]))
+            except:
+                try:
+                    bonusPoeng.append(bonuspoints.at[ids])
+                except:
+                    bonusPoeng.append(0)
+            
+        return bonusPoeng
+
+    def getAllPlayerList():
+        url = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
+        r = requests.get(url)
+        json = r.json()
+        liveElements_df = pd.DataFrame(json['elements'])
+        liveId = liveElements_df['id']
+        stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
+        liveTotPoints_df = pd.DataFrame(stats_df[['total_points', 'bonus']])
+        liveTotPoints_df.insert(0,'id', liveId, True)
+        return liveTotPoints_df
+
+    liveTotPoints = getAllPlayerList()
+
+    def getLivePlayerPoints(teamId):
+        slim_picks = getAutoSubs(teamId)
+        
+        slim_picks['live_bonus'] = getLiveBonusList(teamId)
+        
+        poeng = []
+        for i in range(len(slim_picks)):
+            tempId = slim_picks.at[i,'element']
+            poeng.append((liveTotPoints.iat[tempId - 1, 1] + slim_picks.at[i, 'live_bonus'] - 
+                    liveTotPoints.iat[tempId - 1, 2]) * slim_picks.at[i, 'multiplier'])
+            
+        return poeng
+
+    def getPointsAndPlayers(teamId):
+        tabell = getAutoSubs(teamId)
+        poeng = getLivePlayerPoints(teamId)
+
+        tabell['points'] = poeng
+
+        return tabell[['navn', 'points']]
+
+    result = render_template('main_page.html', tables=[getPointsAndPlayers(3378570).to_html(classes="table table-dark table-borderless table-striped", table_id="test", border="0")])
+    
     return result
 
 if __name__ == '__main__':
