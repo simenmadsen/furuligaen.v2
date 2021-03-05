@@ -35,7 +35,6 @@ def getBootstrapNames():
 
 names = getBootstrapNames()
 
-lagId = 1309866
 
 @app.route("/")
 def index():
@@ -476,7 +475,7 @@ def vinnere():
 
     return result
 
-@app.route("/" + str(lagId))
+@app.route("/1309866")
 def lag():
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
@@ -795,7 +794,7 @@ def lag():
         return tabell[['navn', 'points', 'pos', 'photo']]
     
 
-    data = getPointsAndPlayers(lagId)
+    data = getPointsAndPlayers(1309866)
     data = data.apply(pd.Series.explode).to_dict(orient='records')
 
     gk = []
