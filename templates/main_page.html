@@ -13,7 +13,28 @@
 {% endblock %}
 
 {% block content %}
-        {% for table in tables %}
-            {{ table|safe }}
+<table class="table table-dark table-borderless table-striped">
+    <thead>
+        <th>#</th>
+        <th>Navn</th>
+        <th>Tot</th>
+        <th>GW{{thisGw}}</th>
+        <th>{{gwHead}}</th>
+        
+    </thead>
+        {%for obj in data%}
+        
+        <tr>
+            
+            <td>{{obj.Rank}}</td>
+            <td><a href="/{{obj.Entry}}">{{obj.Navn}}</a></td>
+            <td>{{obj.Tot}}</td>
+            <td>{{obj.GW}}</td>
+            <td>{{obj.GWround}}</td>
+        </a>
+        </tr>
         {% endfor %}
+</table>
 {% endblock %}
+
+'Rank', 'Navn', 'Tot', 'GW', 'GWround'

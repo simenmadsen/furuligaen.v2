@@ -38,18 +38,19 @@ p {
   font-size: small;
 }
 
+a{
+  color: white !important;
+}
+
 table {
   text-align: center !important;
   margin: auto !important;
   margin-top: auto;
 }
 
-th:nth-child(1), td:nth-child(1) {
-  display: none;
-}
-
 td:nth-child(2) {
   font-weight: bolder;
+
 }
 
 td:last-child {

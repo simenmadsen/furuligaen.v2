@@ -4,6 +4,8 @@ import pandas as pd
 import requests
 from datetime import timedelta, datetime
 
+from requests.api import request
+
 app = Flask(__name__)
 
 def getTeamList():
@@ -394,13 +396,18 @@ def index():
         tabell = getTeamsPoints()
         
         tabell.insert(0, 'Navn', league_df[['player_name']], True)
+        tabell['entry'] = teamsList['entry']
         tabellSort = tabell.sort_values ('Round', ascending=False)
         tabellSort.insert(0, "#", range(1, len(tabell) + 1), True)
-        tabellSort.columns = ['#', 'Navn', 'Tot', 'GW'+str(thisGw), gwHeader()]
+        tabellSort.columns = ['Rank', 'Navn', 'Tot', 'GW', 'GWround', 'Entry']
         
         return tabellSort
     
-    result = render_template('main_page.html', tables=[getTabell().to_html(classes="table table-dark table-borderless table-striped", table_id="test", border="0")])
+    gwHead = gwHeader()
+
+    data = getTabell()
+    data = data.apply(pd.Series.explode).to_dict(orient='records')
+    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw)
     
     return result
 
@@ -466,8 +473,6 @@ def vinnere():
                 
         result = pd.DataFrame(rundevinnere)
         result.insert(0, 'Runde', gwIntervall[:(len(result))], True)
-        #result['Runde'] = gwIntervall[:2]
-        #result.insert(0,'Runde', range(1, len(result) + 1), True)
         result.columns = ['GW', 'Vinner', 'Poeng']
         return result
     
@@ -475,8 +480,8 @@ def vinnere():
 
     return result
 
-@app.route("/lag")
-def lag():
+@app.route("/<lagId>")
+def lag(lagId):
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
         r3 = requests.get(url3)
@@ -794,7 +799,7 @@ def lag():
         return tabell[['navn', 'points', 'pos', 'photo']]
     
 
-    data = getPointsAndPlayers(1309866)
+    data = getPointsAndPlayers(lagId)
     data = data.apply(pd.Series.explode).to_dict(orient='records')
 
     gk = []
