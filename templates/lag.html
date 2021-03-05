@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Picks</h2>
+    <h1><span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
     <p>
     {% for player in gk_photo%}
     <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70">
@@ -54,7 +54,7 @@
         {{player}} &nbsp;
         {% endfor %}
     </p>
-    <h2>Bench</h2>
+    <h2><span class="badge rounded-pill bg-warning text-dark">Bench</span></h2>
     <p>
         {% for player in benk_photo%}
         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 

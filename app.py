@@ -832,10 +832,11 @@ def lag(lagId):
             att_photo.append(data[i]['photo'])
             att.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
             
+    poeng = sum(getLivePlayerPoints(lagId))
 
     result = render_template('lag.html', gk = gk, defs = defs, mid = mid, att = att, 
     gk_photo = gk_photo, defs_photo = defs_photo, mid_photo = mid_photo, att_photo = att_photo,
-    benk = benk, benk_photo = benk_photo)
+    benk = benk, benk_photo = benk_photo, poeng = poeng)
     
     return result
 
