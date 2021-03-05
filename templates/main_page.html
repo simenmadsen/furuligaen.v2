@@ -9,28 +9,25 @@
 {% endblock %}
 
 {% block content %}
-<table class="table table-dark table-borderless table-striped">
+<table class="sortable table table-dark table-borderless table-striped">
     <thead>
-        <th>#</th>
-        <th>Navn</th>
-        <th>Tot</th>
-        <th>GW{{thisGw}}</th>
-        <th>{{gwHead}}</th>
+        <th onclick="sortTable(0)">#</th>
+        <th onclick="sortTable(0)">Navn</th>
+        <th onclick="sortTable(0)">Tot</th>
+        <th onclick="sortTable(0)">GW{{thisGw}}</th>
+        <th onclick="sortTable(0)">{{gwHead}}</th>
         
     </thead>
         {%for obj in data%}
-        
         <tr>
-            
             <td>{{obj.Rank}}</td>
             <td><a href="/{{obj.Entry}}">{{obj.Navn}}</a></td>
             <td>{{obj.Tot}}</td>
             <td>{{obj.GW}}</td>
             <td>{{obj.GWround}}</td>
-        </a>
         </tr>
         {% endfor %}
 </table>
-{% endblock %}
 
-'Rank', 'Navn', 'Tot', 'GW', 'GWround'
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+{% endblock %}

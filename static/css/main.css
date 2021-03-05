@@ -10,15 +10,8 @@ th {
   text-align: center !important;
   background-color: rgba(255, 255, 55, 100) !important;
   color: black;
+  font-size: larger;
  
-}
-
-label {
-  text-align: center;
-  color: white;
-  align-items: center;
-  margin:0 auto;
-  display: flex;
 }
 
 h1 {
@@ -38,6 +31,7 @@ p {
 
 a{
   color: white !important;
+  text-decoration: none !important;
 }
 
 table {
