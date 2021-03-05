@@ -35,6 +35,7 @@ def getBootstrapNames():
 
 names = getBootstrapNames()
 
+lagId = 1309866
 
 @app.route("/")
 def index():
@@ -475,7 +476,7 @@ def vinnere():
 
     return result
 
-@app.route("/lag")
+@app.route("/" + str(lagId))
 def lag():
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
@@ -783,9 +784,54 @@ def lag():
 
         tabell['points'] = poeng
 
-        return tabell[['navn', 'points']]
+        posisjon = []
+        photo = []
+        for player in tabell['element']:
+            posisjon.append(teams.at[player, 'element_type'])
+            photo.append(names.at[player, 'code'])
 
-    result = render_template('main_page.html', tables=[getPointsAndPlayers(3378570).to_html(classes="table table-dark table-borderless table-striped", table_id="test", border="0")])
+        tabell['pos'] = posisjon
+        tabell['photo'] = photo
+        return tabell[['navn', 'points', 'pos', 'photo']]
+    
+
+    data = getPointsAndPlayers(lagId)
+    data = data.apply(pd.Series.explode).to_dict(orient='records')
+
+    gk = []
+    defs = []
+    mid = []
+    att = []
+
+    gk_photo = []
+    defs_photo = []
+    mid_photo = []
+    att_photo = []
+
+    benk = []
+    benk_photo = []
+
+    for i in range (len(data[11:15])):
+        benk.append(data[i+11]['navn'] + "(" + str(data[i+11]['points']) + ")")
+        benk_photo.append(data[i+11]['photo'])
+    for i in range (len(data[0:11])):
+        if (data[i]['pos'] == 1):
+            gk_photo.append(data[i]['photo'])
+            gk.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+        if (data[i]['pos'] == 2):
+            defs_photo.append(data[i]['photo'])
+            defs.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+        if (data[i]['pos'] == 3):
+            mid_photo.append(data[i]['photo'])
+            mid.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+        if (data[i]['pos'] == 4):
+            att_photo.append(data[i]['photo'])
+            att.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+            
+
+    result = render_template('lag.html', gk = gk, defs = defs, mid = mid, att = att, 
+    gk_photo = gk_photo, defs_photo = defs_photo, mid_photo = mid_photo, att_photo = att_photo,
+    benk = benk, benk_photo = benk_photo)
     
     return result
 

@@ -13,6 +13,58 @@
 {% endblock %}
 
 {% block content %}
-<h1>Hei</h1>
-<p>{{data}}</p>
+    <h2>Picks</h2>
+    <p>
+    {% for player in gk_photo%}
+    <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70">
+    {% endfor %}
+    </p>
+    <p>
+    {% for player in gk %}
+        {{player}}
+    {% endfor %}
+    </p>
+    <p>
+        {% for player in defs_photo%}
+        <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70">
+        {% endfor %}
+        </p>
+    <p>
+    {% for player in defs %}
+    {{player}}&nbsp;
+    {% endfor %}
+    </p>
+    <p>
+        {% for player in mid_photo%}
+        <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
+        {% endfor %}
+        </p>
+    <p>
+        {% for player in mid %}
+       {{player}} &nbsp;
+        {% endfor %}
+    </p>
+    <p>
+        {% for player in att_photo%}
+        <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
+        {% endfor %}
+        </p>
+    <p>
+        {% for player in att %}
+        {{player}} &nbsp;
+        {% endfor %}
+    </p>
+    <h2>Bench</h2>
+    <p>
+        {% for player in benk_photo%}
+        <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
+        {% endfor %}
+        </p>
+    <p>
+        {% for player in benk %}
+        {{player}} &nbsp;
+        {% endfor %}
+    </p>
+
 {% endblock %}
+

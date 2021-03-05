@@ -13,12 +13,29 @@ th {
  
 }
 
+label {
+  text-align: center;
+  color: white;
+  align-items: center;
+  margin:0 auto;
+  display: flex;
+}
+
 h1 {
   color: white;
 }
 
+h2 {
+  color: #212529;
+  text-align: center;
+  background-color: rgba(255, 255, 55, 100);
+  width: 100%;
+}
+
 p {
   color:  white;
+  text-align: center;
+  font-size: small;
 }
 
 table {
