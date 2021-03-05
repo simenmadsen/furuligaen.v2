@@ -831,14 +831,23 @@ def lag(lagId):
         if (data[i]['pos'] == 4):
             att_photo.append(data[i]['photo'])
             att.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
-            
+    
+    def getManagerName(lag):
+        for i in range (len(teamsList['entry'])):
+            if (teamsList['entry'][i] == int(lag)):
+                return teamsList['player_name'][i]
+
+
     poeng = sum(getLivePlayerPoints(lagId))
+
+    manager = getManagerName(lagId)
 
     result = render_template('lag.html', gk = gk, defs = defs, mid = mid, att = att, 
     gk_photo = gk_photo, defs_photo = defs_photo, mid_photo = mid_photo, att_photo = att_photo,
-    benk = benk, benk_photo = benk_photo, poeng = poeng)
+    benk = benk, benk_photo = benk_photo, poeng = poeng, manager = manager)
     
     return result
+  
 
 if __name__ == '__main__':
     app.debug = True
