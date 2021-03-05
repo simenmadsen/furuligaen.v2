@@ -476,7 +476,7 @@ def vinnere():
         result.columns = ['GW', 'Vinner', 'Poeng']
         return result
     
-    result = render_template('vinnere.html', tables=[getWinners().to_html(classes="table table-dark table-borderless table-striped", border=0)])
+    result = render_template('vinnere.html', tables=[getWinners().to_html(classes="table table-dark table-borderless table-striped vinnere", border=0)])
 
     return result
 

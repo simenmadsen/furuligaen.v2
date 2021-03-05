@@ -56,3 +56,7 @@ td:nth-child(2) {
 td:last-child {
   font-weight: bolder;
 }
+
+table.dataframe th:first-child, .dataframe td:first-child {
+  display: none !important;
+}
