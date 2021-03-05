@@ -475,7 +475,7 @@ def vinnere():
 
     return result
 
-@app.route("/1309866")
+@app.route("/lag")
 def lag():
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
