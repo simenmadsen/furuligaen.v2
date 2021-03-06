@@ -816,21 +816,21 @@ def lag(lagId):
     benk_photo = []
 
     for i in range (len(data[11:15])):
-        benk.append(data[i+11]['navn'] + "(" + str(data[i+11]['points']) + ")")
+        benk.append(data[i+11]['navn'] + " (" + str(data[i+11]['points']) + ")")
         benk_photo.append(data[i+11]['photo'])
     for i in range (len(data[0:11])):
         if (data[i]['pos'] == 1):
             gk_photo.append(data[i]['photo'])
-            gk.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+            gk.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
         if (data[i]['pos'] == 2):
             defs_photo.append(data[i]['photo'])
-            defs.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+            defs.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
         if (data[i]['pos'] == 3):
             mid_photo.append(data[i]['photo'])
-            mid.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+            mid.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
         if (data[i]['pos'] == 4):
             att_photo.append(data[i]['photo'])
-            att.append(data[i]['navn'] + "(" + str(data[i]['points']) + ")")
+            att.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
     
     def getManagerName(lag):
         for i in range (len(teamsList['entry'])):

@@ -14,59 +14,67 @@
 
 {% block content %}
     <h1><span class="badge rounded-pill bg-warning text-dark">{{manager}}</span> <span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+    <div class = "picks">
     <p>
     {% for player in gk_photo%}
     <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70">
     {% endfor %}
     </p>
     <p>
-    {% for player in gk %}
-        {{player}}
-    {% endfor %}
+        {% for player in gk %}
+        <span class="badge rounded-pill bg-warning text-dark"> {{player}} </span>
+        {% endfor %}
+        </p>
+    <p>
+  
     </p>
     <p>
         {% for player in defs_photo%}
         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70">
         {% endfor %}
         </p>
-    <p>
-    {% for player in defs %}
-    {{player}}&nbsp;
-    {% endfor %}
-    </p>
+        <p>
+            {% for player in defs %}
+            <span class="badge rounded-pill bg-warning text-dark"> {{player}} </span>
+            {% endfor %}
+            </p>
     <p>
         {% for player in mid_photo%}
         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
         {% endfor %}
         </p>
+        <p>
+            {% for player in mid %}
+            <span class="badge rounded-pill bg-warning text-dark"> {{player}} </span>
+            {% endfor %}
+            </p>
     <p>
-        {% for player in mid %}
-       {{player}} &nbsp;
-        {% endfor %}
-    </p>
     <p>
         {% for player in att_photo%}
         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
         {% endfor %}
         </p>
-    <p>
-        {% for player in att %}
-        {{player}} &nbsp;
-        {% endfor %}
-    </p>
-    <h3><span class="badge rounded-pill bg-info text-dark">Bench</span></h3>
+        <p>
+            
+                {% for player in att %}
+                <span class="badge rounded-pill bg-warning text-dark"> {{player}} </span>
+                {% endfor %}
+            </p>
+    
+    </div>
+    <h5><span class="badge rounded-pill bg-light text-dark">Bench</span></h5>
     <p>
         {% for player in benk_photo%}
         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player}}.png" width="70"> 
         {% endfor %}
         </p>
-    <p>
-        {% for player in benk %}
-        {{player}} &nbsp;
-        {% endfor %}
-    </p>
+        <p>
+            {% for player in benk %}
+            <span class="badge rounded-pill bg-warning text-dark"> {{player}} </span>
+            {% endfor %}
+            </p>
 
-
+   
 
 {% endblock %}
 
