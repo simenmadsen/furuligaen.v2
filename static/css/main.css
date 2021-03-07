@@ -19,20 +19,13 @@ h1 {
   text-align: center;
 }
 
-h2, h3, h4, h5 {
+h2 {
   text-align: center;
-}
-
-div.picks {
-  width: 100%;
-  align-content: center;
-
 }
 
 p {
-  color:  white;
+  color: white;
   text-align: center;
-  font-size: small;
 }
 
 a{

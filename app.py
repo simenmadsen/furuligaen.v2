@@ -4,8 +4,6 @@ import pandas as pd
 import requests
 from datetime import timedelta, datetime
 
-from requests.api import request
-
 app = Flask(__name__)
 
 def getTeamList():
@@ -796,55 +794,29 @@ def lag(lagId):
 
         tabell['pos'] = posisjon
         tabell['photo'] = photo
-        return tabell[['navn', 'points', 'pos', 'photo']]
+        return tabell[['navn', 'points', 'pos', 'photo', 'multiplier']]
     
 
     data = getPointsAndPlayers(lagId)
     data = data.apply(pd.Series.explode).to_dict(orient='records')
-
-    gk = []
-    defs = []
-    mid = []
-    att = []
-
-    gk_photo = []
-    defs_photo = []
-    mid_photo = []
-    att_photo = []
-
-    benk = []
-    benk_photo = []
-
-    for i in range (len(data[11:15])):
-        benk.append(data[i+11]['navn'] + " (" + str(data[i+11]['points']) + ")")
-        benk_photo.append(data[i+11]['photo'])
-    for i in range (len(data[0:11])):
-        if (data[i]['pos'] == 1):
-            gk_photo.append(data[i]['photo'])
-            gk.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
-        if (data[i]['pos'] == 2):
-            defs_photo.append(data[i]['photo'])
-            defs.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
-        if (data[i]['pos'] == 3):
-            mid_photo.append(data[i]['photo'])
-            mid.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
-        if (data[i]['pos'] == 4):
-            att_photo.append(data[i]['photo'])
-            att.append(data[i]['navn'] + " (" + str(data[i]['points']) + ")")
     
     def getManagerName(lag):
         for i in range (len(teamsList['entry'])):
             if (teamsList['entry'][i] == int(lag)):
                 return teamsList['player_name'][i]
 
+    def getTransCost(teamId):
+        url = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/history/'
+        r = requests.get(url)
+        json = r.json()
+        teamPoints_df = pd.DataFrame(json['current'])
+        return teamPoints_df['event_transfers_cost'][thisGw-1]
 
-    poeng = sum(getLivePlayerPoints(lagId))
+    poeng = sum(getLivePlayerPoints(lagId)) - getTransCost(lagId)
 
     manager = getManagerName(lagId)
 
-    result = render_template('lag.html', gk = gk, defs = defs, mid = mid, att = att, 
-    gk_photo = gk_photo, defs_photo = defs_photo, mid_photo = mid_photo, att_photo = att_photo,
-    benk = benk, benk_photo = benk_photo, poeng = poeng, manager = manager)
+    result = render_template('lag.html', data = data, poeng = poeng, manager = manager)
     
     return result
   

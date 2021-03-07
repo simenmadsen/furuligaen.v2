@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %} 
-   {{manager}}
+   Lag
 {% endblock %}
 
 {% block css %} 
@@ -26,10 +26,7 @@
          <br/>
          {{player['navn']}}
          <br/>
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span>
-         {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
-         {% endif %} 
+         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          </p>
         </div>
     
@@ -49,10 +46,7 @@
          <br/>
          {{player['navn']}}
          <br/>
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span>
-         {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
-         {% endif %}
+         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          </p>
         </div>
     
@@ -73,9 +67,6 @@
          {{player['navn']}}
          <br/>
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-         {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
-         {% endif %}
          </p>
         </div>
     
@@ -95,35 +86,17 @@
          <br/>
          {{player['navn']}}
          <br/>
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span>
-         {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
-         {% endif %} 
+         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          </p>
         </div>
         
     
     {% endif %}
     {%endfor%}
-    </div>
-     <hr style="color:white;width:100%;text-align:left;margin-left:0">
-
-    <div class="row justify-content-evenly">
-    {%for player in data[11:15]%}
-       <div class="col">
-       <p> 
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" width="60">
-         <br/>
-         {{player['navn']}}
-         <br/>
-         <span class="badge rounded-pill bg-light text-dark">{{player['points']}}</span>
-         </p>
-        </div>
-    {%endfor%}
-    </div>
 
    
 
     </div>
+    <hr style="color:white;width:100%;text-align:left;margin:5px">
 {% endblock %}
 
