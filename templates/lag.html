@@ -27,6 +27,9 @@
          {% if player['multiplier'] == 2 %}
          <span class="badge rounded-pill bg-danger">C</span>
          {% endif %}
+         {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">&#x2B06;</span>
+         {% endif %}
         </div>
         </div>
          {{player['navn']}}
@@ -48,6 +51,9 @@
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          {% if player['multiplier'] == 2 %}
          <span class="badge rounded-pill bg-danger">C</span>
+         {% endif %}
+           {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">&#x2B06;</span>
          {% endif %}
         </div>
         </div>
@@ -71,7 +77,10 @@
         <div class = "poeng">
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
+         <span class="badge bg-danger">C</span>
+         {% endif %}
+          {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">&#x2B06;</span>
          {% endif %}
         </div>
         </div>
@@ -95,7 +104,10 @@
         <div class = "poeng">
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
          {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
+         <span class="rounded-pill bg-danger">C</span>
+         {% endif %}
+          {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">&#x2B06;</span>
          {% endif %}
         </div>
         </div>
@@ -118,8 +130,8 @@
         
         <div class = "poeng">
          <span class="badge rounded-pill bg-light text-dark">{{player['points']}}</span> 
-         {% if player['multiplier'] == 2 %}
-         <span class="badge rounded-pill bg-danger">C</span>
+        {% if player['byttet_ut'] == True %}
+         <span class="badge bg-secondary">&#x2B07;</span>
          {% endif %}
         </div>
         </div>
@@ -127,9 +139,6 @@
         </div>
     {%endfor%}
     </div>
-
-   
-
     </div>
 {% endblock %}
 

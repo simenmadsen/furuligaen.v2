@@ -123,6 +123,8 @@ def index():
 
         spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
         
+        spillerListeOrg['byttet_inn'] = False
+        spillerListeOrg['byttet_ut'] = False
         spillerListe = spillerListeOrg.copy()
 
         minDef = 3
@@ -177,6 +179,8 @@ def index():
                 if not didNotPlay(keeperbytte):
                     spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
                     spillerListe.iat[i,1] = 1
+                    spillerListe.at[i, 'byttet_inn'] = True
+                    spillerListe.at[11, 'byttet_ut'] = True
                     countGk += 1
                 else:
                     countGk += 1
@@ -197,6 +201,9 @@ def index():
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
                         spillerListe.iat[i,1] = 1
 
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
+
                         if innbytterPos == defs:
                             countDef += 1
                         if innbytterPos == mids:
@@ -209,6 +216,9 @@ def index():
                     if countDef < minDef and innbytterPos == defs:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
+
                         countDef += 1
                         byttet = True
                         break
@@ -216,6 +226,8 @@ def index():
                     if countMid < minMid and innbytterPos == mids:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True                        
                         countMid += 1
                         byttet = True
                         break
@@ -223,6 +235,8 @@ def index():
                     if countAtt < minAtt and innbytterPos == atts:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
                         countAtt += 1
                         byttet = True
                         break
@@ -235,7 +249,7 @@ def index():
                     if spillerpos == atts:
                         countAtt += 1
                     
-        return spillerListe[0:15][['element', 'multiplier']]
+        return spillerListe[0:15][['element', 'multiplier', 'byttet_inn', 'byttet_ut']]
 
     # Live bonus
 
@@ -545,6 +559,8 @@ def lag(lagId):
 
         spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
         
+        spillerListeOrg['byttet_inn'] = False
+        spillerListeOrg['byttet_ut'] = False
         spillerListe = spillerListeOrg.copy()
 
         minDef = 3
@@ -599,6 +615,8 @@ def lag(lagId):
                 if not didNotPlay(keeperbytte):
                     spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
                     spillerListe.iat[i,1] = 1
+                    spillerListe.at[i, 'byttet_inn'] = True
+                    spillerListe.at[11, 'byttet_ut'] = True
                     countGk += 1
                 else:
                     countGk += 1
@@ -619,6 +637,9 @@ def lag(lagId):
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
                         spillerListe.iat[i,1] = 1
 
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
+
                         if innbytterPos == defs:
                             countDef += 1
                         if innbytterPos == mids:
@@ -631,6 +652,9 @@ def lag(lagId):
                     if countDef < minDef and innbytterPos == defs:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
+
                         countDef += 1
                         byttet = True
                         break
@@ -638,6 +662,8 @@ def lag(lagId):
                     if countMid < minMid and innbytterPos == mids:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True                        
                         countMid += 1
                         byttet = True
                         break
@@ -645,6 +671,8 @@ def lag(lagId):
                     if countAtt < minAtt and innbytterPos == atts:
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
+                        spillerListe.at[i, 'byttet_inn'] = True
+                        spillerListe.at[j, 'byttet_ut'] = True
                         countAtt += 1
                         byttet = True
                         break
@@ -656,15 +684,15 @@ def lag(lagId):
                         countMid += 1
                     if spillerpos == atts:
                         countAtt += 1
-
+        
         navn = []
         for spiller in spillerListe['element']:
             navn.append(getPlayerName(spiller))
 
-        spillerListe = spillerListe[0:15][['element', 'multiplier']]
+        spillerListe = spillerListe[['element', 'multiplier', 'byttet_ut', 'byttet_inn']]
         spillerListe['navn'] = navn
-        
-        return spillerListe
+                    
+        return spillerListe[['element', 'multiplier','navn', 'byttet_inn', 'byttet_ut', ]]
 
     def getBonusLists():
         liste = []
@@ -794,7 +822,7 @@ def lag(lagId):
 
         tabell['pos'] = posisjon
         tabell['photo'] = photo
-        return tabell[['navn', 'points', 'pos', 'photo', 'multiplier']]
+        return tabell[['navn', 'points', 'pos', 'photo', 'multiplier', 'byttet_inn', 'byttet_ut']]
     
 
     data = getPointsAndPlayers(lagId)
