@@ -116,141 +116,126 @@ def index():
                 return True
     
     def getAutoSubs(teamId):   
-        url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
-        r4 = requests.get(url4)
-        json4 = r4.json()
-        picks_df = pd.DataFrame(json4['picks'])
+            url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
+            r4 = requests.get(url4)
+            json4 = r4.json()
+            picks_df = pd.DataFrame(json4['picks'])
 
-        spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
-        
-        spillerListeOrg['byttet_inn'] = False
-        spillerListeOrg['byttet_ut'] = False
-        spillerListe = spillerListeOrg.copy()
-
-        minDef = 3
-        minMid = 2
-        minAtt = 1
-
-        countGk = 0
-        countDef = 0
-        countMid = 0
-        countAtt = 0
-
-        gk = 1
-        defs = 2
-        mids = 3
-        atts = 4
-
-        keeperbytte = spillerListe.iat[11, 0]
-
-        for obj in spillerListe['element'][0:11]:
-            starter = obj
-            spillerpos = teams.at[starter, 'element_type']
-            spilteIkke = didNotPlay(starter)
-
-            if not spilteIkke:
-                if spillerpos == gk:
-                    countGk += 1
-                if spillerpos == defs:
-                    countDef += 1
-                if spillerpos == mids:
-                    countMid += 1
-                if spillerpos == atts:
-                    countAtt += 1
-
-        for i in range(len(spillerListe[0:11])):
-            if (countGk + countDef + countMid + countAtt) == 11:
-                break
+            spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
             
-            starter = spillerListe.iat[i,0]
-            spilteIkke = didNotPlay(starter)
-            spillerpos = teams.at[starter, 'element_type']
+            spillerListe = spillerListeOrg.copy()
 
-            erKaptein = spillerListe.iat[i, 2]
+            minDef = 3
+            minMid = 2
+            minAtt = 1
 
-            # sjekke kaptein
-            if spilteIkke and erKaptein:
-                spillerListe.loc[spillerListe['is_vice_captain'] == True, 'multiplier'] = spillerListe.iat[i, 1]
-                spillerListe.iat[i, 1] = 0
+            countGk = 0
+            countDef = 0
+            countMid = 0
+            countAtt = 0
 
-            # keeperbytte
-            if spillerpos == gk and spilteIkke:
-                spillerListe.iat[i,1] = 0
-                if not didNotPlay(keeperbytte):
-                    spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
-                    spillerListe.iat[i,1] = 1
-                    spillerListe.at[i, 'byttet_inn'] = True
-                    spillerListe.at[11, 'byttet_ut'] = True
-                    countGk += 1
-                else:
-                    countGk += 1
-                    
-            # bytte fra benken
-            if spillerpos != gk and spilteIkke:
-                
-                spillerListe.iat[i,1] = 0
-                byttet = False
+            gk = 1
+            defs = 2
+            mids = 3
+            atts = 4
 
-                for j in range (len(spillerListe[12:15])):
-                    if didNotPlay(spillerListe[12:15].iat[j,0]):
-                        continue
-                    
-                    innbytterPos = teams.at[spillerListe[12:15].iat[j,0], 'element_type']
+            keeperbytte = spillerListe.iat[11, 0]
 
-                    if countDef >= minDef and countMid >= minMid and countAtt >= minAtt:
-                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
-                        spillerListe.iat[i,1] = 1
+            for obj in spillerListe['element'][0:11]:
+                starter = obj
+                spillerpos = teams.at[starter, 'element_type']
+                spilteIkke = didNotPlay(starter)
 
-                        spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j + 12, 'byttet_ut'] = True
-
-                        if innbytterPos == defs:
-                            countDef += 1
-                        if innbytterPos == mids:
-                            countMid += 1
-                        if innbytterPos == atts:
-                            countAtt += 1
-                        byttet = True
-                        break           
-                            
-                    if countDef < minDef and innbytterPos == defs:
-                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                        spillerListe.iat[i,1] = 1
-                        spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j + 12, 'byttet_ut'] = True
-
-                        countDef += 1
-                        byttet = True
-                        break
-
-                    if countMid < minMid and innbytterPos == mids:
-                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                        spillerListe.iat[i,1] = 1
-                        spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j + 12, 'byttet_ut'] = True                        
-                        countMid += 1
-                        byttet = True
-                        break
-
-                    if countAtt < minAtt and innbytterPos == atts:
-                        spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                        spillerListe.iat[i,1] = 1
-                        spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j + 12, 'byttet_ut'] = True
-                        countAtt += 1
-                        byttet = True
-                        break
-                    
-                if byttet == False:
+                if not spilteIkke:
+                    if spillerpos == gk:
+                        countGk += 1
                     if spillerpos == defs:
                         countDef += 1
                     if spillerpos == mids:
                         countMid += 1
                     if spillerpos == atts:
                         countAtt += 1
-                    
-        return spillerListe[0:15][['element', 'multiplier', 'byttet_inn', 'byttet_ut']]
 
+            for i in range(len(spillerListe[0:11])):
+                if (countGk + countDef + countMid + countAtt) == 11:
+                    break
+                
+                starter = spillerListe.iat[i,0]
+                spilteIkke = didNotPlay(starter)
+                spillerpos = teams.at[starter, 'element_type']
+
+                erKaptein = spillerListe.iat[i, 2]
+
+                # sjekke kaptein
+                if spilteIkke and erKaptein:
+                    spillerListe.loc[spillerListe['is_vice_captain'] == True, 'multiplier'] = spillerListe.iat[i, 1]
+                    spillerListe.iat[i, 1] = 0
+
+                # keeperbytte
+                if spillerpos == gk and spilteIkke:
+                    spillerListe.iat[i,1] = 0
+                    if not didNotPlay(keeperbytte):
+                        spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
+                        spillerListe.iat[i,1] = 1
+                        countGk += 1
+                    else:
+                        countGk += 1
+                        
+                # bytte fra benken
+                if spillerpos != gk and spilteIkke:
+                    
+                    spillerListe.iat[i,1] = 0
+                    byttet = False
+
+                    for j in range (len(spillerListe[12:15])):
+                        if didNotPlay(spillerListe[12:15].iat[j,0]):
+                            continue
+                        
+                        innbytterPos = teams.at[spillerListe[12:15].iat[j,0], 'element_type']
+
+                        if countDef >= minDef and countMid >= minMid and countAtt >= minAtt:
+                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
+                            spillerListe.iat[i,1] = 1
+
+                            if innbytterPos == defs:
+                                countDef += 1
+                            if innbytterPos == mids:
+                                countMid += 1
+                            if innbytterPos == atts:
+                                countAtt += 1
+                            byttet = True
+                            break           
+                                
+                        if countDef < minDef and innbytterPos == defs:
+                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                            spillerListe.iat[i,1] = 1
+                            countDef += 1
+                            byttet = True
+                            break
+
+                        if countMid < minMid and innbytterPos == mids:
+                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                            spillerListe.iat[i,1] = 1
+                            countMid += 1
+                            byttet = True
+                            break
+
+                        if countAtt < minAtt and innbytterPos == atts:
+                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                            spillerListe.iat[i,1] = 1
+                            countAtt += 1
+                            byttet = True
+                            break
+                        
+                    if byttet == False:
+                        if spillerpos == defs:
+                            countDef += 1
+                        if spillerpos == mids:
+                            countMid += 1
+                        if spillerpos == atts:
+                            countAtt += 1
+                        
+            return spillerListe[0:15][['element', 'multiplier']]
     # Live bonus
 
     def getBonusLists():
