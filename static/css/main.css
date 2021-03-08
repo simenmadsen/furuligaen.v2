@@ -51,3 +51,26 @@ td:last-child {
 table.dataframe th:first-child, .dataframe td:first-child {
   display: none !important;
 }
+
+.col {
+  color: white;
+  text-align: center;
+}
+
+#benk {
+  opacity: 0.3;
+  max-width: 30px;
+}
+
+#picks {
+  max-width: 63px;
+}
+
+hr.spillerrad {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  color: white;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
