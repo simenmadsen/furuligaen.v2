@@ -797,6 +797,20 @@ def lag(lagId):
                     liveTotPoints.iat[tempId - 1, 2]) * 1)    
 
         return poeng
+    
+    def getTotalPoints(teamId):
+        slim_picks = getAutoSubs(teamId)
+        
+        slim_picks['live_bonus'] = getLiveBonusList(teamId)
+        
+        poeng = []
+        for i in range(len(slim_picks)):
+            tempId = slim_picks.at[i,'element']
+            poeng.append((liveTotPoints.iat[tempId - 1, 1] + slim_picks.at[i, 'live_bonus'] - 
+                    liveTotPoints.iat[tempId - 1, 2]) * slim_picks.at[i, 'multiplier'])
+  
+
+        return poeng
 
     def getPointsAndPlayers(teamId):
         tabell = getAutoSubs(teamId)
@@ -829,7 +843,7 @@ def lag(lagId):
         teamPoints_df = pd.DataFrame(json['current'])
         return teamPoints_df['event_transfers_cost'][thisGw-1]
 
-    poeng = sum(getLivePlayerPoints(lagId)) - getTransCost(lagId)
+    poeng = sum(getTotalPoints(lagId)) - getTransCost(lagId)
 
     manager = getManagerName(lagId)
 
