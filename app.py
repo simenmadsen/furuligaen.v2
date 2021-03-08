@@ -202,7 +202,7 @@ def index():
                         spillerListe.iat[i,1] = 1
 
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True
 
                         if innbytterPos == defs:
                             countDef += 1
@@ -217,7 +217,7 @@ def index():
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True
 
                         countDef += 1
                         byttet = True
@@ -227,7 +227,7 @@ def index():
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True                        
+                        spillerListe.at[j + 12, 'byttet_ut'] = True                        
                         countMid += 1
                         byttet = True
                         break
@@ -236,7 +236,7 @@ def index():
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True
                         countAtt += 1
                         byttet = True
                         break
@@ -638,7 +638,7 @@ def lag(lagId):
                         spillerListe.iat[i,1] = 1
 
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True
 
                         if innbytterPos == defs:
                             countDef += 1
@@ -653,7 +653,7 @@ def lag(lagId):
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True  
 
                         countDef += 1
                         byttet = True
@@ -663,7 +663,7 @@ def lag(lagId):
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True                        
+                        spillerListe.at[j + 12, 'byttet_ut'] = True                         
                         countMid += 1
                         byttet = True
                         break
@@ -672,7 +672,7 @@ def lag(lagId):
                         spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
                         spillerListe.iat[i,1] = 1
                         spillerListe.at[i, 'byttet_inn'] = True
-                        spillerListe.at[j, 'byttet_ut'] = True
+                        spillerListe.at[j + 12, 'byttet_ut'] = True  
                         countAtt += 1
                         byttet = True
                         break
@@ -801,11 +801,16 @@ def lag(lagId):
         slim_picks['live_bonus'] = getLiveBonusList(teamId)
         
         poeng = []
-        for i in range(len(slim_picks)):
+        for i in range(len(slim_picks[0:11])):
             tempId = slim_picks.at[i,'element']
             poeng.append((liveTotPoints.iat[tempId - 1, 1] + slim_picks.at[i, 'live_bonus'] - 
                     liveTotPoints.iat[tempId - 1, 2]) * slim_picks.at[i, 'multiplier'])
-            
+        
+        for j in range(len(slim_picks[11:15])):
+            tempId = slim_picks.at[j + 11,'element']
+            poeng.append((liveTotPoints.iat[tempId - 1, 1] + slim_picks.at[j + 11, 'live_bonus'] - 
+                    liveTotPoints.iat[tempId - 1, 2]) * 1)    
+
         return poeng
 
     def getPointsAndPlayers(teamId):
@@ -823,7 +828,6 @@ def lag(lagId):
         tabell['pos'] = posisjon
         tabell['photo'] = photo
         return tabell[['navn', 'points', 'pos', 'photo', 'multiplier', 'byttet_inn', 'byttet_ut']]
-    
 
     data = getPointsAndPlayers(lagId)
     data = data.apply(pd.Series.explode).to_dict(orient='records')
