@@ -8,11 +8,12 @@ body {
 th {
   text-transform:uppercase;
   text-align: center !important;
-  background-color: rgba(255, 255, 55, 100) !important;
+  background-color: #ffc107 !important;
   color: black;
   font-size: larger;
  
 }
+
 
 h1 {
   color: white;
@@ -41,7 +42,12 @@ table {
 
 td:nth-child(2) {
   font-weight: bolder;
+  text-align: left;
 
+}
+
+th:nth-child(2) {
+  text-align: left !important;
 }
 
 td:last-child {
