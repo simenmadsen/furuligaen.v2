@@ -72,6 +72,17 @@ table.dataframe th:first-child, .dataframe td:first-child {
   max-width: 63px;
 }
 
+p.navn{
+  font-size: smaller;
+  margin-bottom: auto;
+  font-weight: bolder;
+}
+
+p.navn_bytte {
+  font-size: xx-small;
+  margin-bottom: auto;
+}
+
 hr.spillerrad {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -80,3 +91,32 @@ hr.spillerrad {
   margin-left: auto;
   margin-right: auto;
 }
+
+div.col.header_navn {
+  max-width: 33%;
+  margin: auto;
+}
+
+div.col.header_navn {
+  margin: auto;
+}
+
+div.col.header_points {
+  margin: auto;
+}
+
+div.header_navn{
+
+}
+
+h3.h_navn {
+  background-color: #ffc107;
+  border-radius: 10px;
+  color: #212529;
+  font-weight: bolder;
+  margin: -5px;
+  padding: auto;
+}
+
+
+

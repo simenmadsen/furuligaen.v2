@@ -13,10 +13,14 @@
 {% endblock %}
 
 {% block content %}
-    <h1><span class="badge rounded-pill bg-warning text-dark">{{manager}}</span> <span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+
+    
     <div class="container"> 
     
     <div class="row justify-content-evenly">
+        <div class = "col header_navn">
+        <h3 class = "h_navn">{{manager}}</h3>
+        </div>
     {%for player in data[0:11]%}
     {% if player['pos'] == 1 %}
          <div class="col">
@@ -34,12 +38,18 @@
          <span class="badge bg-success">▲</span>
          {% endif %}
         </div>
+          <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
         </div>
-         {{player['navn']}}
         </div>
     
     {% endif %}
     {%endfor%}
+      
+        <div class = "col header_points">
+        <h1><span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+        </div>
     
     </div>
 <hr class ="spillerrad">
@@ -50,20 +60,23 @@
         <div class="col">
         <div class = "spiller">
          <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" id="picks">
-        <div class = "poeng">
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-             {% if player['multiplier'] == 2 %}
-         <span class="badge bg-danger">C</span>
-         {% endif %}
-         {% if player['multiplier'] == 3%}
-         <span class="badge bg-danger">TC</span>
-         {% endif %}
-           {% if player['byttet_inn'] == True %}
-         <span class="badge bg-success">▲</span>
-         {% endif %}
+            <div class = "poeng">
+                <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
+                    {% if player['multiplier'] == 2 %}
+                <span class="badge bg-danger">C</span>
+                {% endif %}
+                {% if player['multiplier'] == 3%}
+                <span class="badge bg-danger">TC</span>
+                {% endif %}
+                {% if player['byttet_inn'] == True %}
+                <span class="badge bg-success">▲</span>
+                {% endif %}
+            </div>
+            <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
         </div>
-        </div>
-         {{player['navn']}}
+        
         </div>
     
     {% endif %}
@@ -78,22 +91,24 @@
     {% if player['pos'] == 3 %}
     
          <div class="col">
-        <div class = "spiller">
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" id="picks">
-        <div class = "poeng">
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-           {% if player['multiplier'] == 2 %}
-         <span class="badge bg-danger">C</span>
-         {% endif %}
-         {% if player['multiplier'] == 3%}
-         <span class="badge bg-danger">TC</span>
-         {% endif %}
-          {% if player['byttet_inn'] == True %}
-         <span class="badge bg-success">▲</span>
-         {% endif %}
-        </div>
-        </div>
-         {{player['navn']}}
+            <div class = "spiller">
+                <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" id="picks">
+                <div class = "poeng">
+                    <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
+                    {% if player['multiplier'] == 2 %}
+                    <span class="badge bg-danger">C</span>
+                    {% endif %}
+                    {% if player['multiplier'] == 3%}
+                    <span class="badge bg-danger">TC</span>
+                    {% endif %}
+                    {% if player['byttet_inn'] == True %}
+                    <span class="badge bg-success">▲</span>
+                    {% endif %}
+                </div>
+                 <div>
+                 <p class ="navn">{{player['navn']}}</p>
+                </div>
+            </div>
         </div>
     {% endif %}
     {%endfor%}
@@ -122,8 +137,10 @@
          <span class="badge bg-success">▲</span>
          {% endif %}
         </div>
+         <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
         </div>
-         {{player['navn']}}
         </div>
         
    
@@ -146,8 +163,11 @@
          <span class="badge bg-secondary">▼</span>
          {% endif %}
         </div>
+         <div>
+                 <p class ="navn_bytte">{{player['navn']}}</p>
+            </div>
         </div>
-         {{player['navn']}}
+ 
         </div>
     {%endfor%}
     </div>
