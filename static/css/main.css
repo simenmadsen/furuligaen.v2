@@ -93,11 +93,6 @@ hr.spillerrad {
 }
 
 div.col.header_navn {
-  max-width: 33%;
-  margin: auto;
-}
-
-div.col.header_navn {
   margin: auto;
 }
 
@@ -110,8 +105,8 @@ h3.h_navn {
   border-radius: 10px;
   color: #212529;
   font-weight: bolder;
-  margin: -5px;
-  padding: auto;
+  margin: -8px;
+  margin-left: 8px;
 }
 
 
