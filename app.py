@@ -843,9 +843,14 @@ def lag(lagId):
         teamPoints_df = pd.DataFrame(json['current'])
         return teamPoints_df['event_transfers_cost'][thisGw-1]
 
+    def getFornavn(navn):
+        for i in range (len(navn)):
+            if navn[i] == " ":
+                return navn[0:i]
+
     poeng = sum(getTotalPoints(lagId)) - getTransCost(lagId)
 
-    manager = getManagerName(lagId)
+    manager = getFornavn(getManagerName(lagId))
 
     result = render_template('lag.html', data = data, poeng = poeng, manager = manager)
     
