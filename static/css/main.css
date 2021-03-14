@@ -117,11 +117,12 @@ hr.spillerrad {
 
 .testing:hover .overlay {
   height: 100%;
+
 }
 
 .text {
   color: white;
-  font-size: 8px;
+  font-size: 11px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -130,6 +131,20 @@ hr.spillerrad {
   transform: translate(-50%, -50%);
   max-width: 100%;
   text-align: right;
+}
+
+table.info_table {
+  width: 100%;
+}
+
+table.info_table td:first-child {
+  text-align: left;
+  width: fit-content;
+}
+
+table.info_table td:last-child {
+  text-align: right;
+  font-weight: bolder;
 }
 
 
