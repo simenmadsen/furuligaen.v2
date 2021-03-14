@@ -28,44 +28,64 @@
           <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
           <div class="overlay">
             <div class="text">
+             <table class ="info_table">
             {% for info in player['liveInfo'] %}
               {% if info['identifier'] == 'minutes' %}
-               Min
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Minutes</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'goals_scored' %}
-               Goal
-                  <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Goals</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                 {% if info['identifier'] == 'assists' %}
-               Assist
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Assists</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'clean_sheets' %}
-               Donut
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>C.Sheet</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'saves' %}
-               Save
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Saves</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'goals_conceded' %}
-               GA
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>G.Against</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'yellow_cards' %}
-               Yellow
-               <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Yellow</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'red_cards' %}
-               Red
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Red</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'bonus' %}
-                Bonus
-                <b>{{info['value']}} </b><br/>
+                <tr>
+               <td>Bonus</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
             {% endfor %}
+            </table>
             </div>
           </div>
         </div>
@@ -106,44 +126,64 @@
           <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
           <div class="overlay">
             <div class="text">
+            <table class ="info_table">
             {% for info in player['liveInfo'] %}
               {% if info['identifier'] == 'minutes' %}
-               Min
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Minutes</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'goals_scored' %}
-               Goal
-                  <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Goals</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                 {% if info['identifier'] == 'assists' %}
-               Assist
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Assists</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'clean_sheets' %}
-               Donut
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>C.Sheet</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'saves' %}
-               Save
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Saves</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'goals_conceded' %}
-               GA
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>G.Against</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'yellow_cards' %}
-               Yellow
-               <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Yellow</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'red_cards' %}
-               Red
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Red</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'bonus' %}
-                Bonus
-                <b>{{info['value']}} </b><br/>
+                <tr>
+               <td>Bonus</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
             {% endfor %}
+            </table>
             </div>
           </div>
         </div>            <div class = "poeng">
@@ -182,44 +222,64 @@
           <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
           <div class="overlay">
             <div class="text">
+            <table class ="info_table">
             {% for info in player['liveInfo'] %}
               {% if info['identifier'] == 'minutes' %}
-               Min
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Minutes</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'goals_scored' %}
-               Goal
-                  <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Goals</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                 {% if info['identifier'] == 'assists' %}
-               Assist
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Assists</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'clean_sheets' %}
-               Donut
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>C.Sheet</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'saves' %}
-               Save
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Saves</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'goals_conceded' %}
-               GA
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>G.Against</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'yellow_cards' %}
-               Yellow
-               <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Yellow</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'red_cards' %}
-               Red
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Red</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'bonus' %}
-                Bonus
-                <b>{{info['value']}} </b><br/>
+                <tr>
+               <td>Bonus</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
             {% endfor %}
+            </table>
             </div>
           </div>
         </div>                
@@ -257,44 +317,64 @@
           <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
           <div class="overlay">
             <div class="text">
+                        <table class ="info_table">
             {% for info in player['liveInfo'] %}
               {% if info['identifier'] == 'minutes' %}
-               Min
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Minutes</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'goals_scored' %}
-               Goal
-                  <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Goals</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                 {% if info['identifier'] == 'assists' %}
-               Assist
-                  <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Assists</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'clean_sheets' %}
-               Donut
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>C.Sheet</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'saves' %}
-               Save
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Saves</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'goals_conceded' %}
-               GA
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>G.Against</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'yellow_cards' %}
-               Yellow
-               <b>{{info['value']}} </b><br/>
+              <tr>
+               <td>Yellow</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
               {% if info['identifier'] == 'red_cards' %}
-               Red
-               <b>{{info['value']}} </b><br/>
+               <tr>
+               <td>Red</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
                {% if info['identifier'] == 'bonus' %}
-                Bonus
-                <b>{{info['value']}} </b><br/>
+                <tr>
+               <td>Bonus</td>
+                <td>{{info['value']}}</td>
+                </tr>
               {% endif %}
             {% endfor %}
+            </table>
             </div>
           </div>
         </div>      

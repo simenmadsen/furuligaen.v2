@@ -879,7 +879,7 @@ def lag(lagId):
 
     manager = getFornavn(getManagerName(lagId))
 
-    result = render_template('test.html', data = data, poeng = poeng, manager = manager)
+    result = render_template('lag.html', data = data, poeng = poeng, manager = manager)
     
     return result
   
