@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %} 
-   Lag
+   {{manager}}
 {% endblock %}
 
 {% block css %} 
@@ -13,90 +13,337 @@
 {% endblock %}
 
 {% block content %}
-    <h1><span class="badge rounded-pill bg-warning text-dark">{{manager}}</span> <span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+    
     <div class="container"> 
     
     <div class="row justify-content-evenly">
+        <div class = "col header_navn">
+        <h1><span class="badge rounded-pill bg-warning text-dark">{{manager}}</span></h1>
+        </div>
     {%for player in data[0:11]%}
     {% if player['pos'] == 1 %}
-    
-        <div class="col">
-       <p> 
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" width="60">
-         <br/>
-         {{player['navn']}}
-         <br/>
+         <div class="col">
+        <div class = "spiller">
+         <div class="testing">
+          <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
+          <div class="overlay">
+            <div class="text">
+            {% for info in player['liveInfo'] %}
+              {% if info['identifier'] == 'minutes' %}
+               Min
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'goals_scored' %}
+               Goal
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+                {% if info['identifier'] == 'assists' %}
+               Assist
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'clean_sheets' %}
+               Donut
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'saves' %}
+               Save
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'goals_conceded' %}
+               GA
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'yellow_cards' %}
+               Yellow
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'red_cards' %}
+               Red
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'bonus' %}
+                Bonus
+                <b>{{info['value']}} </b><br/>
+              {% endif %}
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class = "poeng">
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-         </p>
+         {% if player['multiplier'] == 2 %}
+         <span class="badge bg-danger">C</span>
+         {% endif %}
+         {% if player['multiplier'] == 3%}
+         <span class="badge bg-danger">TC</span>
+         {% endif %}
+         {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">▲</span>
+         {% endif %}
+        </div>
+          <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
+        </div>
         </div>
     
     {% endif %}
     {%endfor%}
-    </div>
+      
+        <div class = "col header_points">
+        <h1><span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+        </div>
     
-    <hr style="color:white;width:100%;text-align:left;margin-left:0">
-
+    </div>
+<hr class ="spillerrad">
     <div class="row justify-content-evenly">
     {%for player in data[0:11]%}
     {% if player['pos'] == 2 %}
     
         <div class="col">
-         <p> 
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" width="60">
-         <br/>
-         {{player['navn']}}
-         <br/>
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-         </p>
+        <div class = "spiller">
+<div class="testing">
+          <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
+          <div class="overlay">
+            <div class="text">
+            {% for info in player['liveInfo'] %}
+              {% if info['identifier'] == 'minutes' %}
+               Min
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'goals_scored' %}
+               Goal
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+                {% if info['identifier'] == 'assists' %}
+               Assist
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'clean_sheets' %}
+               Donut
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'saves' %}
+               Save
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'goals_conceded' %}
+               GA
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'yellow_cards' %}
+               Yellow
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'red_cards' %}
+               Red
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'bonus' %}
+                Bonus
+                <b>{{info['value']}} </b><br/>
+              {% endif %}
+            {% endfor %}
+            </div>
+          </div>
+        </div>            <div class = "poeng">
+                <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
+                    {% if player['multiplier'] == 2 %}
+                <span class="badge bg-danger">C</span>
+                {% endif %}
+                {% if player['multiplier'] == 3%}
+                <span class="badge bg-danger">TC</span>
+                {% endif %}
+                {% if player['byttet_inn'] == True %}
+                <span class="badge bg-success">▲</span>
+                {% endif %}
+            </div>
+            <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
+        </div>
+        
         </div>
     
     {% endif %}
     {%endfor%}
+  
     </div>
-
-    <hr style="color:white;width:100%;text-align:left;margin-left:0">
+  <hr class ="spillerrad">
+    
     
   <div class="row justify-content-evenly">
     {%for player in data[0:11]%}
     {% if player['pos'] == 3 %}
     
-       <div class="col">
-         <p> 
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" width="60">
-         <br/>
-         {{player['navn']}}
-         <br/>
-         <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-         </p>
+         <div class="col">
+            <div class = "spiller">
+<div class="testing">
+          <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
+          <div class="overlay">
+            <div class="text">
+            {% for info in player['liveInfo'] %}
+              {% if info['identifier'] == 'minutes' %}
+               Min
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'goals_scored' %}
+               Goal
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+                {% if info['identifier'] == 'assists' %}
+               Assist
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'clean_sheets' %}
+               Donut
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'saves' %}
+               Save
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'goals_conceded' %}
+               GA
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'yellow_cards' %}
+               Yellow
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'red_cards' %}
+               Red
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'bonus' %}
+                Bonus
+                <b>{{info['value']}} </b><br/>
+              {% endif %}
+            {% endfor %}
+            </div>
+          </div>
+        </div>                
+        <div class = "poeng">
+                    <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
+                    {% if player['multiplier'] == 2 %}
+                    <span class="badge bg-danger">C</span>
+                    {% endif %}
+                    {% if player['multiplier'] == 3%}
+                    <span class="badge bg-danger">TC</span>
+                    {% endif %}
+                    {% if player['byttet_inn'] == True %}
+                    <span class="badge bg-success">▲</span>
+                    {% endif %}
+                </div>
+                 <div>
+                 <p class ="navn">{{player['navn']}}</p>
+                </div>
+            </div>
         </div>
-    
     {% endif %}
     {%endfor%}
+ 
     </div>
 
-    <hr style="color:white;width:100%;text-align:left;margin-left:0">
+   <hr class ="spillerrad">
 
     <div class="row justify-content-evenly">
     {%for player in data[0:11]%}
     {% if player['pos'] == 4 %}
     
-       <div class="col">
-       <p> 
-         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" width="60">
-         <br/>
-         {{player['navn']}}
-         <br/>
+     <div class="col">
+        <div class = "spiller">
+<div class="testing">
+          <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" class="foto">
+          <div class="overlay">
+            <div class="text">
+            {% for info in player['liveInfo'] %}
+              {% if info['identifier'] == 'minutes' %}
+               Min
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'goals_scored' %}
+               Goal
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+                {% if info['identifier'] == 'assists' %}
+               Assist
+                  <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'clean_sheets' %}
+               Donut
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'saves' %}
+               Save
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'goals_conceded' %}
+               GA
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'yellow_cards' %}
+               Yellow
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+              {% if info['identifier'] == 'red_cards' %}
+               Red
+               <b>{{info['value']}} </b><br/>
+              {% endif %}
+               {% if info['identifier'] == 'bonus' %}
+                Bonus
+                <b>{{info['value']}} </b><br/>
+              {% endif %}
+            {% endfor %}
+            </div>
+          </div>
+        </div>      
+        <div class = "poeng">
          <span class="badge rounded-pill bg-warning text-dark">{{player['points']}}</span> 
-         </p>
+           {% if player['multiplier'] == 2 %}
+         <span class="badge bg-danger">C</span>
+         {% endif %}
+         {% if player['multiplier'] == 3%}
+         <span class="badge bg-danger">TC</span>
+         {% endif %}
+          {% if player['byttet_inn'] == True %}
+         <span class="badge bg-success">▲</span>
+         {% endif %}
+        </div>
+         <div>
+                 <p class ="navn">{{player['navn']}}</p>
+            </div>
+        </div>
         </div>
         
-    
+   
     {% endif %}
     {%endfor%}
-
-   
-
+    
     </div>
-    <hr style="color:white;width:100%;text-align:left;margin:5px">
+    
+    <hr class ="spillerrad">
+
+    <div class="row justify-content-evenly">
+    {%for player in data[11:15]%}
+        <div class="col">
+        <div class = "spiller">
+         <img src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png" id="benk">
+        
+        <div class = "poeng">
+         <span class="badge rounded-pill bg-light text-dark">{{player['points']}}</span> 
+        {% if player['byttet_ut'] == True %}
+         <span class="badge bg-secondary">▼</span>
+         {% endif %}
+        </div>
+         <div>
+                 <p class ="navn_bytte">{{player['navn']}}</p>
+            </div>
+        </div>
+ 
+        </div>
+    {%endfor%}
+    </div>
+    </div>
 {% endblock %}
 

@@ -811,7 +811,29 @@ def lag(lagId):
   
 
         return poeng
+    
+    def getPlayerInfo(playerId):
+        url2 = 'https://fantasy.premierleague.com/api/event/28/live/'
+        r2 = requests.get(url2)
+        json2 = r2.json()
+        liveInfo = pd.DataFrame(json2['elements'])
+        liveInfo = pd.DataFrame(liveInfo['explain'].values.tolist())
 
+        liveInfo = liveInfo.iat[playerId - 1,0]
+
+        playerInfo = []
+        for info in liveInfo['stats']:
+            if (info['identifier'] != 'bonus'):
+                playerInfo.append(info)
+        
+        try:
+            if bonuspoints.at[playerId] > 0:
+                playerInfo.append({'identifier': 'bonus', 'points': bonuspoints.at[playerId], 'value': bonuspoints.at[playerId]})
+        except:
+            pass
+
+        return playerInfo
+    
     def getPointsAndPlayers(teamId):
         tabell = getAutoSubs(teamId)
         poeng = getLivePlayerPoints(teamId)
@@ -820,16 +842,21 @@ def lag(lagId):
 
         posisjon = []
         photo = []
+        liveInfo = []
         for player in tabell['element']:
             posisjon.append(teams.at[player, 'element_type'])
             photo.append(names.at[player, 'code'])
+            liveInfo.append(getPlayerInfo(player))
 
         tabell['pos'] = posisjon
         tabell['photo'] = photo
-        return tabell[['navn', 'points', 'pos', 'photo', 'multiplier', 'byttet_inn', 'byttet_ut']]
+        tabell['liveInfo'] = liveInfo 
+
+        return tabell[['navn', 'points', 'pos', 'photo', 'multiplier', 'byttet_inn', 'byttet_ut', 'liveInfo']]
 
     data = getPointsAndPlayers(lagId)
-    data = data.apply(pd.Series.explode).to_dict(orient='records')
+    data = data.to_dict(orient='records')
+
     
     def getManagerName(lag):
         for i in range (len(teamsList['entry'])):
@@ -852,7 +879,7 @@ def lag(lagId):
 
     manager = getFornavn(getManagerName(lagId))
 
-    result = render_template('lag.html', data = data, poeng = poeng, manager = manager)
+    result = render_template('test.html', data = data, poeng = poeng, manager = manager)
     
     return result
   

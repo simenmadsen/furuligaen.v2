@@ -83,6 +83,7 @@ p.navn_bytte {
   margin-bottom: auto;
 }
 
+
 hr.spillerrad {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -90,6 +91,45 @@ hr.spillerrad {
   width: 90%;
   margin-left: auto;
   margin-right: auto;
+}
+
+
+.testing {
+  position: relative;
+  width: 100%;
+  margin: auto;
+}
+
+.foto {
+  width: 63px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #212529;
+  overflow: hidden;
+  height: 0;
+  transition: .5s ease;
+}
+
+.testing:hover .overlay {
+  height: 100%;
+}
+
+.text {
+  color: white;
+  font-size: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  text-align: right;
 }
 
 
