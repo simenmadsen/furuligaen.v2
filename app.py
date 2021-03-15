@@ -857,6 +857,21 @@ def lag(lagId):
     data = getPointsAndPlayers(lagId)
     data = data.to_dict(orient='records')
 
+    def getChip(playerId):
+        url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
+        r2 = requests.get(url2)
+        activeChip = r2.json()
+        if activeChip['active_chip'] == 'bboost':
+            return 'Bench Boost'
+        elif activeChip['active_chip'] == '3xc':
+            return 'Triple Cap'
+        elif activeChip['active_chip'] == 'freehit':
+            return 'Free Hit'
+        elif activeChip['active_chip'] == 'wildcard':
+            return 'Wild Card'
+        else:
+            return ''
+        
     
     def getManagerName(lag):
         for i in range (len(teamsList['entry'])):
@@ -879,7 +894,9 @@ def lag(lagId):
 
     manager = getFornavn(getManagerName(lagId))
 
-    result = render_template('lag.html', data = data, poeng = poeng, manager = manager)
+    chip = getChip(lagId)
+
+    result = render_template('lag.html', data = data, poeng = poeng, manager = manager, chip = chip)
     
     return result
   
