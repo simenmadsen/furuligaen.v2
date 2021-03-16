@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %} Transfers {% endblock %} {% block
+content %}
+<table class="transfers table table-dark table-borderless table-striped">
+  <thead>
+    <th>Spiller</th>
+    <th>In</th>
+    <th>Out</th>
+  </thead>
+  {% for trans in data %}
+
+  <tr>
+    <td>{{trans['entry']}}</td>
+    <td>
+    <img class = "trans_in" src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{trans["photo_in"]}}.png">
+    <br>
+      {{trans['element_in']}} 
+    </td>
+
+    <td>
+    <img class = "trans_out" src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{trans["photo_out"]}}.png">
+      <br>
+      {{trans['element_out']}} 
+    </td>
+  </tr>
+
+  {% endfor %}
+</table>
+{% endblock %}

@@ -35,7 +35,6 @@ def getBootstrapNames():
 
 names = getBootstrapNames()
 
-
 @app.route("/")
 def index():
     def checkGameweek():
@@ -407,7 +406,6 @@ def index():
     result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw)
     
     return result
-
 
 @app.route("/vinnere")
 def vinnere():
@@ -899,7 +897,55 @@ def lag(lagId):
     result = render_template('lag.html', data = data, poeng = poeng, manager = manager, chip = chip)
     
     return result
-  
+
+@app.route("/transfers")
+def transfers():
+    def checkGameweek():
+        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+        r3 = requests.get(url3)
+        json = r3.json()
+        gameweek_df = pd.DataFrame(json['events'])
+        iscurrent = gameweek_df[['id', 'is_current']]
+        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
+        return currentGw
+    
+    thisGw = checkGameweek()
+    
+    def getManagerName(lag):
+        for i in range (len(teamsList['entry'])):
+            if (teamsList['entry'][i] == int(lag)):
+                return teamsList['player_name'][i]
+
+    def getPlayerName(playerID):
+        return names.at[playerID, 'web_name']
+    
+    def getPlayerPhoto(playerID):
+        return names.at[playerID, 'code']
+
+    def getTransfers():
+        transfers = []
+        for teamId in teamsList['entry']:
+            url = 'https://fantasy.premierleague.com/api/entry/'+ str(teamId) +'/transfers/'
+            trans = requests.get(url).json()
+            for obj in trans:
+                if obj['event'] == thisGw:
+                    transfers.append({
+                        'entry': getManagerName(obj['entry']), 
+                        'element_in': getPlayerName(obj['element_in']), 
+                        'element_out': getPlayerName(obj['element_out']),
+                        'photo_in': getPlayerPhoto(obj['element_in']),
+                        'photo_out': getPlayerPhoto(obj['element_out'])
+                        })
+                else:
+                    break
+        return transfers
+    
+    data = getTransfers()
+
+    result = render_template('transfers.html', data = data)
+
+    return result
+   
 
 if __name__ == '__main__':
     app.debug = True

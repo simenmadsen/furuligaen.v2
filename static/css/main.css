@@ -67,7 +67,7 @@ table.dataframe th:first-child, .dataframe td:first-child {
 
 #benk {
   opacity: 0.3;
-  max-width: 63px;
+  width: 63px;
 }
 
 #picks {
@@ -147,6 +147,29 @@ table.info_table td:first-child {
 table.info_table td:last-child {
   text-align: right;
   font-weight: bolder;
+}
+
+img.trans_out, img.trans_in {
+  width: 35px;
+}
+
+img.trans_out {
+  opacity: 0.4;
+}
+
+table.transfers {
+  text-align: left !important;
+}
+
+table.transfers th:nth-child(1) {
+  text-align: left !important;
+}
+table.transfers th:nth-child(3) {
+  text-align: left !important;
+}
+
+table.transfers td:last-child {
+  font-weight: normal;
 }
 
 
