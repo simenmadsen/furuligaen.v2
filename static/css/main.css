@@ -7,11 +7,10 @@ body {
 }
 th {
   text-transform:uppercase;
-  text-align: center !important;
   background-color: #ffc107 !important;
   color: black;
   font-size: larger;
- 
+  text-align: left !important;
 }
 
 
@@ -24,8 +23,6 @@ h2, h6 {
   text-align: center;
 }
 
-
-
 p {
   color: white;
   text-align: center;
@@ -36,20 +33,10 @@ a{
   text-decoration: none !important;
 }
 
-table {
-  text-align: center !important;
-  margin: auto !important;
-  margin-top: auto;
-}
-
 td:nth-child(2) {
   font-weight: bolder;
   text-align: left;
 
-}
-
-th:nth-child(2) {
-  text-align: left !important;
 }
 
 td:last-child {
