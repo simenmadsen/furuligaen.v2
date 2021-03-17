@@ -68,7 +68,7 @@ def index():
 
     # For header i tabell
     def gwHeader():
-        return "GW \n" + str(gws) + "→" + str(gwEnd())
+        return str(gws) + "→" + str(gwEnd())
 
     # Auto subs
     def getGwFixtures():
@@ -399,11 +399,26 @@ def index():
         
         return tabellSort
     
+    def getChip(playerId):
+        url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
+        r2 = requests.get(url2)
+        activeChip = r2.json()
+        if activeChip['active_chip'] == 'bboost':
+            return 'Bench Boost'
+        elif activeChip['active_chip'] == '3xc':
+            return 'Triple Cap'
+        elif activeChip['active_chip'] == 'freehit':
+            return 'Free Hit'
+        elif activeChip['active_chip'] == 'wildcard':
+            return 'Wildcard'
+        else:
+            return ''
+
     gwHead = gwHeader()
 
     data = getTabell()
     data = data.apply(pd.Series.explode).to_dict(orient='records')
-    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw)
+    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip)
     
     return result
 
@@ -925,7 +940,10 @@ def transfers():
         url = 'https://fantasy.premierleague.com/api/entry/'+ str(teamId) +'/transfers/'
         trans = requests.get(url).json()
         transfers = []
-        navn = {'manager':getManagerName(teamId), 'transfers':transfers}
+        navn = {
+            'entry': teamId, 
+            'transfers':transfers
+            }
         
         for obj in trans:
             if obj['event'] == thisGw:
@@ -950,7 +968,7 @@ def transfers():
 
     data = getAllTransfers()
 
-    result = render_template('transfers.html', data = data)
+    result = render_template('transfers.html', data = data, getManagerName = getManagerName)
 
     return result
    

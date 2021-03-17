@@ -9,7 +9,7 @@ content %}
   </thead>
   {% for obj in data %}
   <tr>
-    <td>{{obj['manager']}}</td>
+    <td><a href="/{{obj['entry']}}">{{getManagerName(obj['entry'])}}</a></td>
     <td>
         {% for trans in obj['transfers'] %} 
             <img class = "trans_in" src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{trans["photo_in"]}}.png"> 

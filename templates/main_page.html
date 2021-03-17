@@ -21,7 +21,17 @@
         {%for obj in data%}
         <tr>
             <td>{{obj.Rank}}</td>
-            <td><a href="/{{obj.Entry}}">{{obj.Navn}}</a></td>
+            {% if getChip(obj['Entry']) == 'Bench Boost' %}
+                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">BB</span></a></td>
+            {% elif getChip(obj['Entry']) == 'Triple Cap' %}
+                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">TC</span></a></td>
+            {% elif getChip(obj['Entry']) == 'Free Hit' %}
+                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">FH</span></a></td>
+            {% elif getChip(obj['Entry']) == 'Wildcard' %}
+                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">WC</span></a></td>
+            {% else %}
+                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;</a></td>
+            {% endif %}
             <td>{{obj.Tot}}</td>
             <td>{{obj.GW}}</td>
             <td>{{obj.GWround}}</td>
