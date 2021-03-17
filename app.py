@@ -866,11 +866,10 @@ def lag(lagId):
         elif activeChip['active_chip'] == 'freehit':
             return 'Free Hit'
         elif activeChip['active_chip'] == 'wildcard':
-            return 'Wild Card'
+            return 'Wildcard'
         else:
             return ''
-        
-    
+          
     def getManagerName(lag):
         for i in range (len(teamsList['entry'])):
             if (teamsList['entry'][i] == int(lag)):
@@ -922,25 +921,34 @@ def transfers():
     def getPlayerPhoto(playerID):
         return names.at[playerID, 'code']
 
-    def getTransfers():
+    def getPlayerTrans(teamId):
+        url = 'https://fantasy.premierleague.com/api/entry/'+ str(teamId) +'/transfers/'
+        trans = requests.get(url).json()
+        transfers = []
+        navn = {'manager':getManagerName(teamId), 'transfers':transfers}
+        
+        for obj in trans:
+            if obj['event'] == thisGw:
+                transfers.append({ 
+                            'element_in': getPlayerName(obj['element_in']), 
+                            'element_out': getPlayerName(obj['element_out']),
+                            'photo_in': getPlayerPhoto(obj['element_in']),
+                            'photo_out': getPlayerPhoto(obj['element_out'])
+                            })
+        if not transfers:
+            return None
+        else:
+            return navn
+        
+    def getAllTransfers():
         transfers = []
         for teamId in teamsList['entry']:
-            url = 'https://fantasy.premierleague.com/api/entry/'+ str(teamId) +'/transfers/'
-            trans = requests.get(url).json()
-            for obj in trans:
-                if obj['event'] == thisGw:
-                    transfers.append({
-                        'entry': getManagerName(obj['entry']), 
-                        'element_in': getPlayerName(obj['element_in']), 
-                        'element_out': getPlayerName(obj['element_out']),
-                        'photo_in': getPlayerPhoto(obj['element_in']),
-                        'photo_out': getPlayerPhoto(obj['element_out'])
-                        })
-                else:
-                    break
+            obj = getPlayerTrans(teamId)
+            if obj != None:
+                transfers.append(obj)
         return transfers
-    
-    data = getTransfers()
+
+    data = getAllTransfers()
 
     result = render_template('transfers.html', data = data)
 

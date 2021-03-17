@@ -172,5 +172,9 @@ table.transfers td:last-child {
   font-weight: normal;
 }
 
+table.transfers td:first-child {
+  width: 35%;
+}
+
 
 

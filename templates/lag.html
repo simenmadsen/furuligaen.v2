@@ -357,9 +357,15 @@ css %} {%endblock%} {% block route%} "/" {% endblock %} {% block content %}
     <div class="col">
       <div class="spiller">
         <div class="testing">
+        {% if chip == 'Bench Boost' %}
           <img
           src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png"
-          id="benk">
+          class= "foto">
+        {% else %}
+          <img
+          src="https://resources.premierleague.com/premierleague/photos/players/110x140/p{{player["photo"]}}.png"
+          id= 'benk'>
+        {% endif %}
           <div class="overlay">
             <div class="text">
               <table class="info_table">
@@ -416,7 +422,8 @@ css %} {%endblock%} {% block route%} "/" {% endblock %} {% block content %}
         </div>
 
         <div class="poeng">
-          <span class="badge rounded-pill bg-light text-dark"
+        {% if chip == 'Bench Boost' %}
+           <span class="badge rounded-pill bg-warning text-dark"
             >{{player['points']}}</span
           >
           {% if player['byttet_ut'] == True %}
@@ -424,8 +431,22 @@ css %} {%endblock%} {% block route%} "/" {% endblock %} {% block content %}
           {% endif %}
         </div>
         <div>
-          <p class="navn_bytte">{{player['navn']}}</p>
+          <p class="navn">{{player['navn']}}</p>
         </div>
+
+        {% else %}
+        <span class="badge rounded-pill bg-light text-dark"
+                >{{player['points']}}</span
+              >
+              {% if player['byttet_ut'] == True %}
+              <span class="badge bg-secondary">▼</span>
+              {% endif %}
+            </div>
+            <div>
+              <p class="navn_bytte">{{player['navn']}}</p>
+            </div>
+        {% endif %}
+      
       </div>
     </div>
     {%endfor%}
