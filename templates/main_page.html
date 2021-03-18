@@ -11,30 +11,30 @@
 {% block content %}
 <table class="sortable table table-dark table-borderless table-striped">
     <thead>
-      <th>#</span></th>
+        <th>#</th>
         <th>Navn</th>
-        <th>Tot</th>
-        <th>GW{{thisGw}}</th>
-        <th>{{gwHead}}</th>
+        <th class = "number">Tot</th>
+        <th class = "number">GW{{thisGw}}</th>
+        <th class = "number">{{gwHead}}</th>
         
     </thead>
         {%for obj in data%}
         <tr>
             <td>{{obj.Rank}}</td>
             {% if getChip(obj['Entry']) == 'Bench Boost' %}
-                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">BB</span></a></td>
+                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">BB</span></a></b></td>
             {% elif getChip(obj['Entry']) == 'Triple Cap' %}
-                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">TC</span></a></td>
+                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">TC</span></a></b></td>
             {% elif getChip(obj['Entry']) == 'Free Hit' %}
-                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">FH</span></a></td>
+                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">FH</span></a></b></td>
             {% elif getChip(obj['Entry']) == 'Wildcard' %}
-                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">WC</span></a></td>
+                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">WC</span></a></b></td>
             {% else %}
-                <td><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;</a></td>
+                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}</a></b></td>
             {% endif %}
-            <td>{{obj.Tot}}</td>
-            <td>{{obj.GW}}</td>
-            <td>{{obj.GWround}}</td>
+            <td class = "number">{{obj.Tot}}</td>
+            <td class = "number">{{obj.GW}}</td>
+            <td class = "number"><b>{{obj.GWround}}</b></td>
         </tr>
         {% endfor %}
 </table>

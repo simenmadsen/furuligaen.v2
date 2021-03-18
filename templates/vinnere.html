@@ -9,7 +9,18 @@
 {% endblock %}
 
 {% block content %}
-        {% for table in tables %}
-            {{ table|safe }}
+    <table class="sortable table table-dark table-borderless table-striped">
+    <thead>
+        <th>GW</th>
+        <th>Manager</th>
+        <th>Points</th>
+    </thead>
+        {% for obj in data %}
+            <tr>
+                <td>{{obj['GW']}}</td>
+                <td><b>{{obj['Vinner']}}</b></td>
+                <td>{{obj['Poeng']}}</td>
+            </tr>
         {% endfor %}
+    </table>
 {% endblock %}

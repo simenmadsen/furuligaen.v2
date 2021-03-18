@@ -10,9 +10,11 @@ th {
   background-color: #ffc107 !important;
   color: black;
   font-size: larger;
-  text-align: left !important;
 }
 
+th.number, td.number {
+  text-align: right !important;
+}
 
 h1 {
   color: white;
@@ -31,20 +33,6 @@ p {
 a{
   color: white !important;
   text-decoration: none !important;
-}
-
-td:nth-child(2) {
-  font-weight: bolder;
-  text-align: left;
-
-}
-
-td:last-child {
-  font-weight: bolder;
-}
-
-table.dataframe th:first-child, .dataframe td:first-child {
-  display: none !important;
 }
 
 .col {
@@ -145,13 +133,6 @@ img.trans_out {
 }
 
 table.transfers {
-  text-align: left !important;
-}
-
-table.transfers th:nth-child(1) {
-  text-align: left !important;
-}
-table.transfers th:nth-child(3) {
   text-align: left !important;
 }
 

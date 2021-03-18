@@ -417,7 +417,7 @@ def index():
     gwHead = gwHeader()
 
     data = getTabell()
-    data = data.apply(pd.Series.explode).to_dict(orient='records')
+    data = data.to_dict(orient='records')
     result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip)
     
     return result
@@ -486,7 +486,11 @@ def vinnere():
         result.columns = ['GW', 'Vinner', 'Poeng']
         return result
     
-    result = render_template('vinnere.html', tables=[getWinners().to_html(classes="table table-dark table-borderless table-striped vinnere", border=0)])
+    data = getWinners()
+
+    data = data.to_dict(orient='records')
+    
+    result = render_template('vinnere.html', data = data)
 
     return result
 
