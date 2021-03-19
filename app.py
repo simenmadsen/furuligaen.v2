@@ -830,7 +830,7 @@ def lag(lagId):
         return poeng
     
     def getPlayerInfo(playerId):
-        url2 = 'https://fantasy.premierleague.com/api/event/28/live/'
+        url2 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) '/live/'
         r2 = requests.get(url2)
         json2 = r2.json()
         liveInfo = pd.DataFrame(json2['elements'])
