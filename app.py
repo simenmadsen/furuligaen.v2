@@ -830,7 +830,7 @@ def lag(lagId):
         return poeng
     
     def getPlayerInfo(playerId):
-        url2 = 'https://fantasy.premierleague.com/api/event/28/live/'
+        url2 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
         r2 = requests.get(url2)
         json2 = r2.json()
         liveInfo = pd.DataFrame(json2['elements'])
@@ -839,16 +839,18 @@ def lag(lagId):
         liveInfo = liveInfo.iat[playerId - 1,0]
 
         playerInfo = []
-        for info in liveInfo['stats']:
-            if (info['identifier'] != 'bonus'):
-                playerInfo.append(info)
-        
         try:
-            if bonuspoints.at[playerId] > 0:
-                playerInfo.append({'identifier': 'bonus', 'points': bonuspoints.at[playerId], 'value': bonuspoints.at[playerId]})
+            for info in liveInfo['stats']:
+                if (info['identifier'] != 'bonus'):
+                    playerInfo.append(info)
+            
+            try:
+                if bonuspoints.at[playerId] > 0:
+                    playerInfo.append({'identifier': 'bonus', 'points': bonuspoints.at[playerId], 'value': bonuspoints.at[playerId]})
+            except:
+                pass
         except:
-            pass
-
+            playerInfo.append({'identifier': 'minutes', 'points': 0, 'value': 0})
         return playerInfo
     
     def getPointsAndPlayers(teamId):
