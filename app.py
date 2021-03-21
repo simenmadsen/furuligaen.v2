@@ -977,7 +977,6 @@ def transfers():
     result = render_template('transfers.html', data = data, getManagerName = getManagerName)
 
     return result
-   
 
 if __name__ == '__main__':
     app.debug = True
