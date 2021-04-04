@@ -1,10 +1,11 @@
-from typing import Text
 from flask import Flask, render_template
 import pandas as pd
 import requests
 from datetime import timedelta, datetime
 
 app = Flask(__name__)
+def getPlayerName(playerID):
+    return names.at[playerID, 'web_name']
 
 def getTeamList():
         url2 = 'https://fantasy.premierleague.com/api/leagues-classic/627607/standings/'
@@ -399,6 +400,16 @@ def index():
         
         return tabellSort
     
+    def getCap(playerId):
+        url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
+        r2 = requests.get(url2)
+        picks = r2.json()['picks']
+
+        for pick in picks:
+            if pick['is_captain']:
+                return getPlayerName(pick['element'])
+
+
     def getChip(playerId):
         url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
         r2 = requests.get(url2)
@@ -418,7 +429,7 @@ def index():
 
     data = getTabell()
     data = data.to_dict(orient='records')
-    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip)
+    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap)
     
     return result
 
@@ -539,9 +550,6 @@ def lag(lagId):
         return minutes
 
     minutes = getMinutesPlayed()
-
-    def getPlayerName(playerID):
-        return names.at[playerID, 'web_name']
 
     def didNotPlay(playerId):
         teamId = teams.at[playerId, 'team']

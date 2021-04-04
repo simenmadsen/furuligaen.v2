@@ -21,17 +21,22 @@
         {%for obj in data%}
         <tr>
             <td>{{obj.Rank}}</td>
-            {% if getChip(obj['Entry']) == 'Bench Boost' %}
-                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">BB</span></a></b></td>
-            {% elif getChip(obj['Entry']) == 'Triple Cap' %}
-                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">TC</span></a></b></td>
-            {% elif getChip(obj['Entry']) == 'Free Hit' %}
-                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">FH</span></a></b></td>
-            {% elif getChip(obj['Entry']) == 'Wildcard' %}
-                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}&nbsp;&nbsp;<span class="badge bg-danger">WC</span></a></b></td>
-            {% else %}
-                <td><b><a href="/{{obj.Entry}}">{{obj.Navn}}</a></b></td>
-            {% endif %}
+            <td>
+                <b><a href="/{{obj.Entry}}">{{obj.Navn}}</b>
+                <br>
+                <span class="captain badge bg-warning text-dark">{{getCap(obj['Entry'])}}</span>
+                {% if getChip(obj['Entry']) == 'Bench Boost' %}
+                <span class="badge bg-danger">BB</span>
+                {% elif getChip(obj['Entry']) == 'Triple Cap' %}
+                <span class="badge bg-danger">TC</span>
+                {% elif getChip(obj['Entry']) == 'Free Hit' %}
+                <span class="badge bg-danger">FH</span>
+                {% elif getChip(obj['Entry']) == 'Wildcard' %}
+                <span class="badge bg-danger">WC</span>
+                {% endif %}
+                </a>
+            </td>
+        
             <td class = "number">{{obj.Tot}}</td>
             <td class = "number">{{obj.GW}}</td>
             <td class = "number"><b>{{obj.GWround}}</b></td>
