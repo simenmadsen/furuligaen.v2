@@ -22,7 +22,8 @@
         <tr>
             <td>{{obj.Rank}}</td>
             <td>
-                <b><a href="/{{obj.Entry}}">{{obj.Navn}}</b>
+                <a href="/{{obj.Entry}}">
+                <b>{{obj.Navn}}</b>
                 <br>
                 <span class="captain badge bg-warning text-dark">{{getCap(obj['Entry'])}}</span>
                 {% if getChip(obj['Entry']) == 'Bench Boost' %}

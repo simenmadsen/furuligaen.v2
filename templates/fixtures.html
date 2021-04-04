@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %} 
+Fixtures
+{% endblock %}
+
+{% block content %}
+    <table class="centered table table-dark table-borderless table-striped">
+        {% for fix in fixtures %}
+                <tr>
+                    <td>
+                        {{getTeamName(fix['team_h'])}}
+                    </td>
+                    <td>
+                        <img class="teamLogo" src="https://resources.premierleague.com/premierleague/badges/t{{getTeamLogo(fix['team_h'])}}.png">
+                    </td>
+                    {% if fix['team_h_score'] == None %}
+                    <td>
+                        <span class="captain badge bg-white text-dark">0</span>
+                    </td>
+                    <td>
+                        <span class="captain badge bg-white text-dark">0</span>
+                    </td>
+                    {% else %}
+                    <td>
+                        <span class="captain badge bg-warning text-dark">{{fix['team_h_score']}}</span>
+                    </td>
+                    <td>
+                        <span class="captain badge bg-warning text-dark">{{fix['team_a_score']}}</span>
+                    </td>
+                    {% endif %}
+                    <td>
+                        <img class="teamLogo" src="https://resources.premierleague.com/premierleague/badges/t{{getTeamLogo(fix['team_a'])}}.png">
+                    </td>
+                    <td>
+                        {{getTeamName(fix['team_a'])}}
+                    </td>
+                </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
