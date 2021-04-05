@@ -18,7 +18,7 @@ Fixtures
                     <td>
                         {{dateAndTime(fix['kickoff_time'])}}
                     </td>
-                    {% elif isGameInPlay(fix['team_h']) %}
+                    {% elif fix['started'] and not fix['finished_provisional'] %}
                     <td>
                         <span class="badge bg-warning text-dark">{{fix['team_h_score']}}</span>
                         &nbsp;&nbsp;&nbsp;
