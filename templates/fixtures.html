@@ -14,7 +14,7 @@ Fixtures
                     <td>
                         <img class="teamLogo" src="https://resources.premierleague.com/premierleague/badges/t{{getTeamLogo(fix['team_h'])}}.png">
                     </td>
-                    {% if fix['team_h_score'] == None %}
+                    {% if not fix['started'] %}
                     <td>
                         {{dateAndTime(fix['kickoff_time'])}}
                     </td>
