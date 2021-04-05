@@ -2,7 +2,8 @@ from flask import Flask, render_template
 from numpy import fix
 import pandas as pd
 import requests
-from datetime import timedelta, datetime
+from datetime import date, timedelta, datetime
+import time
 
 app = Flask(__name__)
 def getPlayerName(playerID):
@@ -1022,7 +1023,22 @@ def fixtures():
         fixtures = requests.get(url).json()
         return fixtures;
 
-    result = render_template('fixtures.html', fixtures = getFixtures(), getTeamName = getTeamName, getTeamLogo = getTeamLogo)
+    def isGameInPlay(teamId):
+        url = 'https://fantasy.premierleague.com/api/fixtures/?event='+ str(thisGw)
+        fixtures = requests.get(url).json()
+        for fix in fixtures:
+            if teamId == fix['team_a'] or teamId == fix['team_h']:
+                return fix['started'] and not fix['finished_provisional']
+    
+    def dateAndTime(utc_datetime):
+        utc_datetime = datetime.strptime(utc_datetime, "%Y-%m-%dT%H:%M:%SZ")
+        now_timestamp = time.time()
+        offset = datetime.fromtimestamp(now_timestamp) - datetime.utcfromtimestamp(now_timestamp)
+        result = utc_datetime + offset
+        return result.strftime('%A %H:%M')
+
+    result = render_template('fixtures.html', fixtures = getFixtures(), getTeamName = getTeamName, getTeamLogo = getTeamLogo,
+    isGameInPlay = isGameInPlay, dateAndTime = dateAndTime)
 
     return result
       

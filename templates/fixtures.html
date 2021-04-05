@@ -16,17 +16,19 @@ Fixtures
                     </td>
                     {% if fix['team_h_score'] == None %}
                     <td>
-                        <span class="captain badge bg-white text-dark">0</span>
+                        {{dateAndTime(fix['kickoff_time'])}}
                     </td>
+                    {% elif isGameInPlay(fix['team_h']) %}
                     <td>
-                        <span class="captain badge bg-white text-dark">0</span>
+                        <span class="badge bg-warning text-dark">{{fix['team_h_score']}}</span>
+                        &nbsp;&nbsp;&nbsp;
+                        <span class="badge bg-warning text-dark">{{fix['team_a_score']}}</span>
                     </td>
                     {% else %}
                     <td>
-                        <span class="captain badge bg-warning text-dark">{{fix['team_h_score']}}</span>
-                    </td>
-                    <td>
-                        <span class="captain badge bg-warning text-dark">{{fix['team_a_score']}}</span>
+                        <span class="badge bg-success">{{fix['team_h_score']}}</span>
+                         &nbsp;&nbsp;&nbsp;
+                        <span class="badge bg-success">{{fix['team_a_score']}}</span>
                     </td>
                     {% endif %}
                     <td>
