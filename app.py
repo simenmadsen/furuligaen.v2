@@ -1003,7 +1003,7 @@ def fixtures():
         return result.strftime('%A %H:%M')
 
     result = render_template('fixtures.html', fixtures = getFixtures(), getTeamName = getTeamName, getTeamLogo = getTeamLogo,
-    dateAndTime = dateAndTime)
+    dateAndTime = dateAndTime, thisGw = thisGw)
 
     return result
 

@@ -5,7 +5,9 @@ Fixtures
 {% endblock %}
 
 {% block content %}
+    <h1><span class="badge rounded-pill bg-warning text-dark">Gameweek {{thisGw}}</span></h1>
     <table class="centered table table-dark table-borderless table-striped">
+
         {% for fix in fixtures %}
                 <tr>
                     <td>

@@ -152,6 +152,10 @@ table.centered {
   text-align: center;
 }
 
+h1.left {
+  float: left;
+}
+
 
 
 
