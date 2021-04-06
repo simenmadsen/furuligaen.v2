@@ -1,8 +1,7 @@
 from flask import Flask, render_template
-from numpy import fix
 import pandas as pd
 import requests
-from datetime import date, timedelta, datetime
+from datetime import timedelta, datetime
 import time
 
 app = Flask(__name__)
@@ -53,18 +52,18 @@ def index():
 
     def getGwStart():
         gw = thisGw
-        liste = [5, 9, 13, 17, 21, 25, 29, 33, 37]
+        liste = [5, 9, 13, 17, 21, 25, 29, 33]
         for obj in liste:
             if gw < obj:
                 return obj - 4 
         else:
-            return 37     
+            return 33     
 
     gws = getGwStart()
 
     def gwEnd ():
         gw = gws
-        if gw == 37 or gw == 38:
+        if gw == 33:
             return 38
         else:
             return gw + 3
@@ -328,7 +327,6 @@ def index():
             
         return bonusPoeng
 
-
     def getAllPlayerList():
         url = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
         r = requests.get(url)
@@ -411,7 +409,6 @@ def index():
             if pick['is_captain']:
                 return getPlayerName(pick['element'])
 
-
     def getChip(playerId):
         url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
         r2 = requests.get(url2)
@@ -435,73 +432,48 @@ def index():
     
     return result
 
-@app.route("/vinnere")
+@app.route("/winners")
 def vinnere():
-    def checkGameweek():
-        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
-        r3 = requests.get(url3)
-        json = r3.json()
-        gameweek_df = pd.DataFrame(json['events'])
-        iscurrent = gameweek_df[['id', 'is_current']]
-        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
-        return currentGw
-
-    thisGw = checkGameweek()
-
-    def getGwStart():
-        gw = thisGw
-        liste = [5, 9, 13, 17, 21, 25, 29, 33, 37]
-        for obj in liste:
-            if gw < obj:
-                return obj - 4 
-        else:
-            return 37     
-
-    gws = getGwStart()
-
     # Rundevinnere
-    def getRoundPoints(slutter):
-        starter = slutter - 5
-        slutter = starter + 4
-
+    def getRoundWinners(roundStart, roundEnd):
         result = []
-        navn = []
-        # Finner scoren til alle spillerne i parmeterintervallet
-        
         for i in range (len(teamsList)):
-            url = 'https://fantasy.premierleague.com/api/entry/' + str(teamsList.iat[i,0]) + '/history/'
-            r = requests.get(url)
-            json = r.json()
-            teamPoints_df = pd.DataFrame(json['current'])
-            result.append(teamPoints_df['points'][starter:slutter].sum() - 
-                        teamPoints_df['event_transfers_cost'][starter:slutter].sum())
-            navn.append(teamsList.iat[i,1])
-        
-        samlet = pd.DataFrame(result, navn)
-        samlet.reset_index(inplace = True)
-        maxClm = samlet.loc[samlet[0].argmax()]
-        
-        return maxClm
+            url = 'https://fantasy.premierleague.com/api/entry/' + str(teamsList.at[i,'entry']) + '/history/'
+            teamPoints = requests.get(url).json()['current']
+            if roundEnd == 4:
+                result.append((
+                    teamPoints[roundEnd - 1]['total_points'],
+                    teamsList.at[i,'player_name']
+                    ))
+            else:
+                result.append(
+                    (teamPoints[roundEnd - 1]['total_points'] 
+                    - teamPoints[roundStart - 2]['total_points'],
+                    teamsList.at[i,'player_name'],))
+        return max(result)
 
     def getWinners():
-        nyRunde = [5, 9, 13, 17, 21, 25, 29, 33, 37]
+        url = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+        events = requests.get(url).json()['events']
+        nyRunde = [(1,4), (5,8), (9,12), (13,16), (17,20), (21,24), (25,28), (29,32), (33,38)]
         rundevinnere = []
+        result = []
+        i = 0
         gwIntervall = ["1 → 4", "5 → 8", "9 → 12", "13 → 16", "17 → 20",
-        "21 → 24", "25 → 28", "29 → 32", "33 → 36", "37 → 38"]
-        for obj in nyRunde:
-            if gws < obj:
-                break
-            if gws >= obj:
-                rundevinnere.append(getRoundPoints(obj))
-                
-        result = pd.DataFrame(rundevinnere)
-        result.insert(0, 'Runde', gwIntervall[:(len(result))], True)
-        result.columns = ['GW', 'Vinner', 'Poeng']
+        "21 → 24", "25 → 28", "29 → 32", "33 → 38"]
+        for rndS, rndE in nyRunde:
+            if events[rndE - 1]['data_checked']:
+                rundevinnere.append(getRoundWinners(rndS, rndE))
+        for points, win in rundevinnere:
+            result.append({
+                'GW': gwIntervall[i],
+                'Vinner': win,
+                'Poeng': points
+            })
+            i += 1
         return result
     
     data = getWinners()
-
-    data = data.to_dict(orient='records')
     
     result = render_template('vinnere.html', data = data)
 
@@ -1034,9 +1006,6 @@ def fixtures():
     dateAndTime = dateAndTime)
 
     return result
-      
-
-
 
 if __name__ == '__main__':
     app.debug = True
