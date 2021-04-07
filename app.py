@@ -436,43 +436,41 @@ def index():
 def vinnere():
     # Rundevinnere
     def getRoundWinners(roundStart, roundEnd):
-        result = []
+        result = (any, any)
+        high = 0
         for i in range (len(teamsList)):
             url = 'https://fantasy.premierleague.com/api/entry/' + str(teamsList.at[i,'entry']) + '/history/'
             teamPoints = requests.get(url).json()['current']
             if roundEnd == 4:
-                result.append((
-                    teamPoints[roundEnd - 1]['total_points'],
-                    teamsList.at[i,'player_name']
-                    ))
+                if high < teamPoints[roundEnd - 1]['total_points']:
+                    result = (teamPoints[roundEnd - 1]['total_points'], teamsList.at[i,'player_name'])
+                    high = teamPoints[roundEnd - 1]['total_points']
             else:
-                result.append(
-                    (teamPoints[roundEnd - 1]['total_points'] 
-                    - teamPoints[roundStart - 2]['total_points'],
-                    teamsList.at[i,'player_name'],))
-        return max(result)
+                if high < (teamPoints[roundEnd - 1]['total_points'] - teamPoints[roundStart - 2]['total_points']):
+                    result = (teamPoints[roundEnd - 1]['total_points'] - teamPoints[roundStart - 2]['total_points'],
+                    teamsList.at[i,'player_name'])
+                    high = teamPoints[roundEnd - 1]['total_points'] - teamPoints[roundStart - 2]['total_points']
+        return result
 
     def getWinners():
         url = 'https://fantasy.premierleague.com/api/bootstrap-static/'
         events = requests.get(url).json()['events']
         nyRunde = [(1,4), (5,8), (9,12), (13,16), (17,20), (21,24), (25,28), (29,32), (33,38)]
-        rundevinnere = []
         result = []
         i = 0
         gwIntervall = ["1 → 4", "5 → 8", "9 → 12", "13 → 16", "17 → 20",
         "21 → 24", "25 → 28", "29 → 32", "33 → 38"]
         for rndS, rndE in nyRunde:
             if events[rndE - 1]['data_checked']:
-                rundevinnere.append(getRoundWinners(rndS, rndE))
-        for points, win in rundevinnere:
-            result.append({
-                'GW': gwIntervall[i],
-                'Vinner': win,
-                'Poeng': points
-            })
-            i += 1
+                rundevinnere = getRoundWinners(rndS, rndE)
+                result.append({
+                    'GW': gwIntervall[i],
+                    'Vinner': rundevinnere[1],
+                    'Poeng': rundevinnere[0]
+                })
+                i += 1
         return result
-    
+
     data = getWinners()
     
     result = render_template('vinnere.html', data = data)
