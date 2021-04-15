@@ -1,5 +1,7 @@
 html {
   background-color: #212529 !important;
+  margin: auto;
+  max-width: 760px;
 }
 
 body {
@@ -11,6 +13,7 @@ th {
   color: black;
   font-size: larger;
 }
+
 
 th.number, td.number {
   text-align: right !important;
@@ -52,7 +55,6 @@ a{
 p.navn{
   font-size: smaller;
   margin-bottom: auto;
-  font-weight: bolder;
 }
 
 p.navn_bytte {
@@ -146,6 +148,10 @@ table.transfers td:first-child {
 
 img.teamLogo {
   width: 40px;
+}
+
+table {
+  font-weight: bolder;
 }
 
 table.centered {
