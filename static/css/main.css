@@ -55,10 +55,11 @@ a{
 p.navn{
   font-size: smaller;
   margin-bottom: auto;
+  font-weight: bolder;
 }
 
 p.navn_bytte {
-  font-size: xx-small;
+  font-size: smaller;
   margin-bottom: auto;
 }
 
