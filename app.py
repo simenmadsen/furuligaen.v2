@@ -809,29 +809,28 @@ def lag(lagId):
 
         return poeng
     
-    def getPlayerInfo(playerId):
+    def getPlayerInfo(playerId): 
         url2 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
-        r2 = requests.get(url2)
-        json2 = r2.json()
-        liveInfo = pd.DataFrame(json2['elements'])
-        liveInfo = pd.DataFrame(liveInfo['explain'].values.tolist())
-
-        liveInfo = liveInfo.iat[playerId - 1,0]
-
+        liveInfo = requests.get(url2).json()['elements']
+        liveInfo = liveInfo[playerId-1]['explain']
         playerInfo = []
-        try:
-            for info in liveInfo['stats']:
-                if (info['identifier'] != 'bonus'):
-                    playerInfo.append(info)
-            
-            try:
-                if bonuspoints.at[playerId] > 0:
-                    playerInfo.append({'identifier': 'bonus', 'points': bonuspoints.at[playerId], 'value': bonuspoints.at[playerId]})
-            except:
-                pass
-        except:
-            playerInfo.append({'identifier': 'minutes', 'points': 0, 'value': 0})
-        return playerInfo
+        for stats in liveInfo:
+            for stat in stats['stats']:
+                playerInfo.append(stat)
+
+        df = pd.DataFrame(playerInfo)
+        test = []
+        visited = []
+        for i in range(len(df)):
+            tempIdentifier = df.at[i, 'identifier']
+            if tempIdentifier not in visited:
+                tempValue = df.loc[df['identifier'] == tempIdentifier, 'value'].sum()
+                test.append({
+                    'identifier' : tempIdentifier,
+                    'value' : tempValue
+                })
+                visited.append(tempIdentifier)
+        return test
     
     def getPointsAndPlayers(teamId):
         tabell = getAutoSubs(teamId)
