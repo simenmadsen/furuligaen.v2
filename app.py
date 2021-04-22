@@ -814,22 +814,27 @@ def lag(lagId):
         liveInfo = requests.get(url2).json()['elements']
         liveInfo = liveInfo[playerId-1]['explain']
         playerInfo = []
+        test = []
         for stats in liveInfo:
             for stat in stats['stats']:
                 playerInfo.append(stat)
 
         df = pd.DataFrame(playerInfo)
-        test = []
         visited = []
         for i in range(len(df)):
             tempIdentifier = df.at[i, 'identifier']
-            if tempIdentifier not in visited:
+            if tempIdentifier not in visited and tempIdentifier != 'bonus':
                 tempValue = df.loc[df['identifier'] == tempIdentifier, 'value'].sum()
                 test.append({
                     'identifier' : tempIdentifier,
                     'value' : tempValue
                 })
                 visited.append(tempIdentifier)
+        try:
+            if bonuspoints.at[playerId] > 0:
+                test.append({'identifier': 'bonus', 'points': bonuspoints.at[playerId], 'value': bonuspoints.at[playerId]})
+        except:
+            pass
         return test
     
     def getPointsAndPlayers(teamId):
