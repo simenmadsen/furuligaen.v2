@@ -39,7 +39,15 @@
             </td>
         
             <td class = "number">{{obj.Tot}}</td>
-            <td class = "number">{{obj.GW}}</td>
+            <td class = "number">
+                {{obj.GW}} <br>
+                {% if countFinishedPlayers(obj.Entry) == "11 / 11" or countFinishedPlayers(obj.Entry) == "15 / 15" %}
+                    <span class="badge bg-danger">Done</span>
+                 {% else %}
+                    <span class="badge bg-warning">{{countFinishedPlayers(obj.Entry)}}</span>
+                {% endif %} 
+               
+            </td>
             <td class = "number"><b>{{obj.GWround}}</b></td>
         </tr>
         {% endfor %}

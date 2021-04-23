@@ -115,7 +115,7 @@ def index():
                 return minutes.at[playerId, 'minutes'] == 0 and allFix.at[teamId, 'finished_provisional']
             except:
                 return True
-    
+
     def getAutoSubs(teamId):   
             url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
             r4 = requests.get(url4)
@@ -394,6 +394,7 @@ def index():
         
         tabell.insert(0, 'Navn', league_df[['player_name']], True)
         tabell['entry'] = teamsList['entry']
+
         tabellSort = tabell.sort_values ('Round', ascending=False)
         tabellSort.insert(0, "#", range(1, len(tabell) + 1), True)
         tabellSort.columns = ['Rank', 'Navn', 'Tot', 'GW', 'GWround', 'Entry']
@@ -424,11 +425,39 @@ def index():
         else:
             return ''
 
-    gwHead = gwHeader()
+    def hasPlayed(playerId):
+        teamId = teams.at[playerId, 'team']
+        try:
+            return all(allFix.at[teamId, 'finished_provisional'])
+        except:
+            try:
+                return allFix.at[teamId, 'finished_provisional']
+            except:
+                return True
+    
+
+    def countFinishedPlayers(teamId):
+        total = 0
+        finished = 0
+        picks = getAutoSubs(teamId)
+        if getChip(teamId) == 'Bench Boost':
+            for pick in picks['element']:
+                if hasPlayed(pick):
+                    finished += 1
+            total = 15
+        else:
+            for pick in picks['element'][0:11]:
+                if hasPlayed(pick):
+                    finished += 1
+            total = 11        
+        return str(finished) + ' / ' + str(total)
 
     data = getTabell()
+    gwHead = gwHeader()
+
     data = data.to_dict(orient='records')
-    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap)
+    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap,
+    countFinishedPlayers = countFinishedPlayers)
     
     return result
 
