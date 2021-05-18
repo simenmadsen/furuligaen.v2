@@ -10,7 +10,7 @@ body {
 th {
   text-transform:uppercase;
   background-color: #ffc107 !important;
-  color: black;
+  color: #212529;
   font-size: larger;
 }
 
