@@ -75,6 +75,7 @@ css %} {%endblock%} {% block route%} "/" {% endblock %} {% block content %}
           <span class="badge rounded-pill bg-warning text-dark"
             >{{player['points']}}</span
           >
+          
           {% if player['multiplier'] == 2 %}
           <span class="badge bg-danger">C</span>
           {% endif %} {% if player['multiplier'] == 3%}
@@ -93,6 +94,7 @@ css %} {%endblock%} {% block route%} "/" {% endblock %} {% block content %}
 
     <div class="col header_points">
       <h1><span class="badge rounded-pill bg-danger">{{poeng}} pts</span></h1>
+      <h6><span class="badge rounded-pill bg-warning text-dark">{{countPlayed}}</span></h6>
     </div>
   </div>
   <hr class="spillerrad" />

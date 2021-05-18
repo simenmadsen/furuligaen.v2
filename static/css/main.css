@@ -14,6 +14,13 @@ th {
   font-size: larger;
 }
 
+th:last-child {
+   border-top-right-radius: 10px;
+}
+
+th:first-child {
+    border-top-left-radius: 10px;
+}
 
 th.number, td.number {
   text-align: right !important;
@@ -162,6 +169,7 @@ table.centered {
 h1.left {
   float: left;
 }
+
 
 
 

@@ -435,7 +435,6 @@ def index():
             except:
                 return True
     
-
     def countFinishedPlayers(teamId):
         total = 0
         finished = 0
@@ -885,6 +884,33 @@ def lag(lagId):
         tabell['liveInfo'] = liveInfo 
 
         return tabell[['navn', 'points', 'pos', 'photo', 'multiplier', 'byttet_inn', 'byttet_ut', 'liveInfo']]
+    
+    def hasPlayed(playerId):
+        teamId = teams.at[playerId, 'team']
+        try:
+            return all(allFix.at[teamId, 'finished_provisional'])
+        except:
+            try:
+                return allFix.at[teamId, 'finished_provisional']
+            except:
+                return True
+    
+    def countFinishedPlayers(teamId):
+        total = 0
+        finished = 0
+        picks = getAutoSubs(teamId)
+        if getChip(teamId) == 'Bench Boost':
+            for pick in picks['element']:
+                if hasPlayed(pick):
+                    finished += 1
+            total = 15
+        else:
+            for pick in picks['element'][0:11]:
+                if hasPlayed(pick):
+                    finished += 1
+            total = 11        
+        return str(finished) + ' / ' + str(total)
+
 
     data = getPointsAndPlayers(lagId)
     data = data.to_dict(orient='records')
@@ -927,7 +953,9 @@ def lag(lagId):
 
     chip = getChip(lagId)
 
-    result = render_template('lag.html', data = data, poeng = poeng, manager = manager, chip = chip)
+    countPlayed = countFinishedPlayers(lagId)
+
+    result = render_template('lag.html', data = data, poeng = poeng, manager = manager, chip = chip, countPlayed = countPlayed)
     
     return result
 
