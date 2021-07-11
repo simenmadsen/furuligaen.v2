@@ -9,7 +9,7 @@ def getPlayerName(playerID):
     return names.at[playerID, 'web_name']
 
 def getTeamList():
-        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/627607/standings/'
+        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
         r2 = requests.get(url2)
         json2 = r2.json()
         standings_df = pd.DataFrame(json2['standings'])
@@ -384,7 +384,7 @@ def index():
         return ny_tabell
 
     def getTabell():
-        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/627607/standings/'
+        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
         r2 = requests.get(url2)
         json2 = r2.json()
         standings_df = pd.DataFrame(json2['standings'])
