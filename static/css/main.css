@@ -170,6 +170,11 @@ h1.left {
   float: left;
 }
 
+h3.rules {
+  color: white;
+  text-align: center;
+}
+
 
 
 

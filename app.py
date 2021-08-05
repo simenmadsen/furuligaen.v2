@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from numpy import empty
 import pandas as pd
 import requests
 from datetime import timedelta, datetime
@@ -9,12 +10,25 @@ def getPlayerName(playerID):
     return names.at[playerID, 'web_name']
 
 def getTeamList():
+    try:
         url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
         r2 = requests.get(url2)
         json2 = r2.json()
         standings_df = pd.DataFrame(json2['standings'])
         league_df = pd.DataFrame(standings_df['results'].values.tolist())
         return league_df [['entry', 'player_name']]
+    except:
+        return None
+def getNewEntries():
+        url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+        r = requests.get(url).json()
+        return r['new_entries']['results'] 
+
+def getAvgHistoryScore(entryId):
+        url = 'https://fantasy.premierleague.com/api/entry/' + str(entryId) + '/history/'
+        r = requests.get(url).json()
+        avg = (r['past'][-1]['rank'] + r['past'][-2]['rank'] + r['past'][-3]['rank']) / 3
+        return "{:,}".format(int(avg))
 
 teamsList = getTeamList()
 
@@ -39,6 +53,14 @@ names = getBootstrapNames()
 
 @app.route("/")
 def index():
+    #checks if FPL has started
+    url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+    r = requests.get(url).json()
+    if not r['standings']['results']:
+        data = getNewEntries()
+        result = render_template('warm_up.html', data = data, getAvgHistoryScore = getAvgHistoryScore)
+        return result
+    
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
         r3 = requests.get(url3)
@@ -455,8 +477,9 @@ def index():
     gwHead = gwHeader()
 
     data = data.to_dict(orient='records')
+    
     result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap,
-    countFinishedPlayers = countFinishedPlayers)
+        countFinishedPlayers = countFinishedPlayers)
     
     return result
 

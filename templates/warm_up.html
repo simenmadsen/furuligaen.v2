@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %} 
+Fixtures
+{% endblock %}
+
+{% block content %}
+<h1>The Players</h1>
+
+
+<table class="transfers table table-dark table-borderless table-striped">
+  <thead>
+    <th>Manager</th>
+    <th>Team Name</th>
+    <th class = "number">Avg Rank Last 3</th>
+  </thead>
+
+  {% for item in data %}
+    <tr>
+        <td>
+            {{item['player_first_name']}}
+            {{item['player_last_name']}}
+        </td>
+        <td>
+            {{item['entry_name']}}
+        </td>
+        <td class = "number">
+            {{getAvgHistoryScore(item['entry'])}}
+        </td>
+    </tr>
+{% endfor %}
+</table>
+
+<h1>The Rules</h1>
+
+<h3 class= "rules"><span class="badge bg-danger">Entries</span><span class="badge text-dark bg-warning">10 Managers</span> </h3>
+
+<h3 class= "rules"><span class="badge bg-danger">Prize Pool</span><span class="badge text-dark bg-warning">20 000 NOK</span> </h3>
+
+<h3 class= "rules"><span class="badge bg-danger">Every 4th Round</span><span class="badge text-dark bg-warning">1 000 NOK</span> </h3>
+
+<h3 class= "rules"><span class="badge bg-danger">Last Round</span><span class="badge text-dark bg-warning">2 000 NOK</span> </h3>
+
+<h3 class= "rules"><span class="badge bg-danger">1st Place Total</span><span class="badge text-dark bg-warning">7 500 NOK</span> </h3>
+
+<h3 class= "rules"><span class="badge bg-danger">2nd Place Total</span><span class="badge text-dark bg-warning">2 500 NOK</span> </h3>
+
+
+{% endblock %}
