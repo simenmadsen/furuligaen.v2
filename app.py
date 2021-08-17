@@ -385,11 +385,10 @@ def index():
         
         livePlayerPoints_trans = livePlayerPoints - teamPoints_df['event_transfers_cost'][thisGw-1]
         
-        if gws == 1:
+        if thisGw == 1:
             
-            liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
-            teamPoints_df['total_points'][(gws - 2)]) + livePlayerPoints_trans
-            liveTotal = liveRound
+            liveRound = livePlayerPoints_trans
+            liveTotal = livePlayerPoints_trans
         else:
 
             liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
