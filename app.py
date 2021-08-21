@@ -389,6 +389,12 @@ def index():
             
             liveRound = livePlayerPoints_trans
             liveTotal = livePlayerPoints_trans
+        elif thisGw == 2 or 3 or 4:
+            liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
+            teamPoints_df['total_points'][(gws - 1)]) + livePlayerPoints_trans
+
+            liveTotal = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
+
         else:
 
             liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
