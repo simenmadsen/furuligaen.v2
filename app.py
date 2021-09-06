@@ -53,6 +53,7 @@ names = getBootstrapNames()
 
 @app.route("/")
 def index():
+    teamsList = getTeamList()
     #checks if FPL has started
     url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
     r = requests.get(url).json()
@@ -484,9 +485,12 @@ def index():
     gwHead = gwHeader()
 
     data = data.to_dict(orient='records')
+
+    def formatScore(score):
+        return "{:,}".format(score)
     
     result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap,
-        countFinishedPlayers = countFinishedPlayers)
+        countFinishedPlayers = countFinishedPlayers, formatScore = formatScore)
     
     return result
 
