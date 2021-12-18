@@ -52,448 +52,452 @@ def getBootstrapNames():
 names = getBootstrapNames()
 
 @app.route("/")
+        
 def index():
-    teamsList = getTeamList()
-    #checks if FPL has started
-    url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
-    r = requests.get(url).json()
-    if not r['standings']['results']:
-        data = getNewEntries()
-        result = render_template('warm_up.html', data = data, getAvgHistoryScore = getAvgHistoryScore)
-        return result
-    
-    def checkGameweek():
-        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
-        r3 = requests.get(url3)
-        json = r3.json()
-        gameweek_df = pd.DataFrame(json['events'])
-        iscurrent = gameweek_df[['id', 'is_current']]
-        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
-        return currentGw
-    
-    thisGw = checkGameweek()
-
-    def getGwStart():
-        gw = thisGw
-        liste = [5, 9, 13, 17, 21, 25, 29, 33]
-        for obj in liste:
-            if gw < obj:
-                return obj - 4 
-        else:
-            return 33     
-
-    gws = getGwStart()
-
-    def gwEnd ():
-        gw = gws
-        if gw == 33:
-            return 38
-        else:
-            return gw + 3
-
-    # For header i tabell
-    def gwHeader():
-        return str(gws) + "→" + str(gwEnd())
-
-    # Auto subs
-    def getGwFixtures():
-        url2 = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
-        r2 = requests.get(url2)
-        json2 = r2.json()
-        fixtures_df = pd.DataFrame(json2)
+    try:
+        teamsList = getTeamList()
+        #checks if FPL has started
+        url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+        r = requests.get(url).json()
+        if not r['standings']['results']:
+            data = getNewEntries()
+            result = render_template('warm_up.html', data = data, getAvgHistoryScore = getAvgHistoryScore)
+            return result
         
-        hfixtures = fixtures_df[['team_h', 'finished_provisional']]
-
-        aFixtures = fixtures_df[['team_a', 'finished_provisional']]
-        aFixtures.columns = ['team_h', 'finished_provisional']
+        def checkGameweek():
+            url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
+            r3 = requests.get(url3)
+            json = r3.json()
+            gameweek_df = pd.DataFrame(json['events'])
+            iscurrent = gameweek_df[['id', 'is_current']]
+            currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
+            return currentGw
         
-        allFix = hfixtures.append(aFixtures)
-        allFix.set_index('team_h', inplace = True)
-        return allFix
+        thisGw = checkGameweek()
 
-    allFix = getGwFixtures()
+        def getGwStart():
+            gw = thisGw
+            liste = [5, 9, 13, 17, 21, 25, 29, 33]
+            for obj in liste:
+                if gw < obj:
+                    return obj - 4 
+            else:
+                return 33     
 
-    def getMinutesPlayed():
-        url1 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
-        r1 = requests.get(url1)
-        json1 = r1.json()
-        liveElements_df = pd.DataFrame(json1['elements'])
-        ids = liveElements_df['id']
-        stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
-        minutes = pd.DataFrame(stats_df['minutes'])
+        gws = getGwStart()
 
-        minutes.insert(0, 'id', ids, True)
+        def gwEnd ():
+            gw = gws
+            if gw == 33:
+                return 38
+            else:
+                return gw + 3
 
-        minutes.set_index('id', inplace = True)
-        return minutes
+        # For header i tabell
+        def gwHeader():
+            return str(gws) + "→" + str(gwEnd())
 
-    minutes = getMinutesPlayed()
-
-    def didNotPlay(playerId):
-        teamId = teams.at[playerId, 'team']
-        try:
-            return minutes.at[playerId, 'minutes'] == 0 and all(allFix.at[teamId, 'finished_provisional'])
-        except:
-            try:
-                return minutes.at[playerId, 'minutes'] == 0 and allFix.at[teamId, 'finished_provisional']
-            except:
-                return True
-
-    def getAutoSubs(teamId):   
-            url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
-            r4 = requests.get(url4)
-            json4 = r4.json()
-            picks_df = pd.DataFrame(json4['picks'])
-
-            spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
+        # Auto subs
+        def getGwFixtures():
+            url2 = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
+            r2 = requests.get(url2)
+            json2 = r2.json()
+            fixtures_df = pd.DataFrame(json2)
             
-            spillerListe = spillerListeOrg.copy()
+            hfixtures = fixtures_df[['team_h', 'finished_provisional']]
 
-            minDef = 3
-            minMid = 2
-            minAtt = 1
+            aFixtures = fixtures_df[['team_a', 'finished_provisional']]
+            aFixtures.columns = ['team_h', 'finished_provisional']
+            
+            allFix = hfixtures.append(aFixtures)
+            allFix.set_index('team_h', inplace = True)
+            return allFix
 
-            countGk = 0
-            countDef = 0
-            countMid = 0
-            countAtt = 0
+        allFix = getGwFixtures()
 
-            gk = 1
-            defs = 2
-            mids = 3
-            atts = 4
+        def getMinutesPlayed():
+            url1 = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
+            r1 = requests.get(url1)
+            json1 = r1.json()
+            liveElements_df = pd.DataFrame(json1['elements'])
+            ids = liveElements_df['id']
+            stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
+            minutes = pd.DataFrame(stats_df['minutes'])
 
-            keeperbytte = spillerListe.iat[11, 0]
+            minutes.insert(0, 'id', ids, True)
 
-            for obj in spillerListe['element'][0:11]:
-                starter = obj
-                spillerpos = teams.at[starter, 'element_type']
-                spilteIkke = didNotPlay(starter)
+            minutes.set_index('id', inplace = True)
+            return minutes
 
-                if not spilteIkke:
-                    if spillerpos == gk:
-                        countGk += 1
-                    if spillerpos == defs:
-                        countDef += 1
-                    if spillerpos == mids:
-                        countMid += 1
-                    if spillerpos == atts:
-                        countAtt += 1
+        minutes = getMinutesPlayed()
 
-            for i in range(len(spillerListe[0:11])):
-                if (countGk + countDef + countMid + countAtt) == 11:
-                    break
+        def didNotPlay(playerId):
+            teamId = teams.at[playerId, 'team']
+            try:
+                return minutes.at[playerId, 'minutes'] == 0 and all(allFix.at[teamId, 'finished_provisional'])
+            except:
+                try:
+                    return minutes.at[playerId, 'minutes'] == 0 and allFix.at[teamId, 'finished_provisional']
+                except:
+                    return True
+
+        def getAutoSubs(teamId):   
+                url4 = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/event/' + str(thisGw) + '/picks/'
+                r4 = requests.get(url4)
+                json4 = r4.json()
+                picks_df = pd.DataFrame(json4['picks'])
+
+                spillerListeOrg = picks_df[['element', 'multiplier', 'is_captain', 'is_vice_captain']]
                 
-                starter = spillerListe.iat[i,0]
-                spilteIkke = didNotPlay(starter)
-                spillerpos = teams.at[starter, 'element_type']
+                spillerListe = spillerListeOrg.copy()
 
-                erKaptein = spillerListe.iat[i, 2]
+                minDef = 3
+                minMid = 2
+                minAtt = 1
 
-                # sjekke kaptein
-                if spilteIkke and erKaptein:
-                    spillerListe.loc[spillerListe['is_vice_captain'] == True, 'multiplier'] = spillerListe.iat[i, 1]
-                    spillerListe.iat[i, 1] = 0
+                countGk = 0
+                countDef = 0
+                countMid = 0
+                countAtt = 0
 
-                # keeperbytte
-                if spillerpos == gk and spilteIkke:
-                    spillerListe.iat[i,1] = 0
-                    if not didNotPlay(keeperbytte):
-                        spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
-                        spillerListe.iat[i,1] = 1
-                        countGk += 1
-                    else:
-                        countGk += 1
-                        
-                # bytte fra benken
-                if spillerpos != gk and spilteIkke:
-                    
-                    spillerListe.iat[i,1] = 0
-                    byttet = False
+                gk = 1
+                defs = 2
+                mids = 3
+                atts = 4
 
-                    for j in range (len(spillerListe[12:15])):
-                        if didNotPlay(spillerListe[12:15].iat[j,0]):
-                            continue
-                        
-                        innbytterPos = teams.at[spillerListe[12:15].iat[j,0], 'element_type']
+                keeperbytte = spillerListe.iat[11, 0]
 
-                        if countDef >= minDef and countMid >= minMid and countAtt >= minAtt:
-                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
-                            spillerListe.iat[i,1] = 1
+                for obj in spillerListe['element'][0:11]:
+                    starter = obj
+                    spillerpos = teams.at[starter, 'element_type']
+                    spilteIkke = didNotPlay(starter)
 
-                            if innbytterPos == defs:
-                                countDef += 1
-                            if innbytterPos == mids:
-                                countMid += 1
-                            if innbytterPos == atts:
-                                countAtt += 1
-                            byttet = True
-                            break           
-                                
-                        if countDef < minDef and innbytterPos == defs:
-                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                            spillerListe.iat[i,1] = 1
-                            countDef += 1
-                            byttet = True
-                            break
-
-                        if countMid < minMid and innbytterPos == mids:
-                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                            spillerListe.iat[i,1] = 1
-                            countMid += 1
-                            byttet = True
-                            break
-
-                        if countAtt < minAtt and innbytterPos == atts:
-                            spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
-                            spillerListe.iat[i,1] = 1
-                            countAtt += 1
-                            byttet = True
-                            break
-                        
-                    if byttet == False:
+                    if not spilteIkke:
+                        if spillerpos == gk:
+                            countGk += 1
                         if spillerpos == defs:
                             countDef += 1
                         if spillerpos == mids:
                             countMid += 1
                         if spillerpos == atts:
                             countAtt += 1
-                        
-            return spillerListe[0:15][['element', 'multiplier']]
-    # Live bonus
 
-    def getBonusLists():
-        liste = []
-        elements = pd.DataFrame()
-        url = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
-        r = requests.get(url)
-        json = r.json()
-        fixtures_df = pd.DataFrame(json)
-        
-        now = datetime.utcnow()
-        for i in range (len(fixtures_df)):
-            gameStart = fixtures_df.at[i, 'kickoff_time']
-            gameStart = datetime.strptime(gameStart, "%Y-%m-%dT%H:%M:%SZ")
-            played60 = gameStart + timedelta(minutes = 79)
-            if now > played60:
-                try:
-                    stats_df = pd.DataFrame(fixtures_df['stats'].iloc[i])
-                    stats_a = pd.DataFrame(stats_df.loc[9,'a'])
-                    stats_h = pd.DataFrame(stats_df.loc[9,'h'])
-                    samlet = stats_a.append(stats_h)
-                    sort = samlet.sort_values(by=['value'], ascending=False)
-                    ferdig = sort.reset_index(drop=True)
-                    bps = ferdig[0:8].copy()
-                    elements = elements.append(bps, ignore_index = True, sort = False)
+                for i in range(len(spillerListe[0:11])):
+                    if (countGk + countDef + countMid + countAtt) == 11:
+                        break
                     
-                    first = False
-                    second = False
-                    third = False
-                    count = 0
-                    for j in range(len(bps)):
-                        if first == False:
-                            try:
-                                if (bps.iat[j,0] == bps.iat[j+1,0]):
-                                    liste.append(3)
-                                    count += 1
-                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
-                                    liste.append(3)
-                                    count += 1
-                                    first = True
-                            except:
-                                pass
+                    starter = spillerListe.iat[i,0]
+                    spilteIkke = didNotPlay(starter)
+                    spillerpos = teams.at[starter, 'element_type']
 
-                        elif second == False and count <= 1:
-                            try:
-                                if (bps.iat[j,0] == bps.iat[j+1,0]):
-                                    liste.append(2)
-                                    count -= 1
-                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
-                                    liste.append(2)
-                                    count += 1
-                                    second = True
-                            except:
-                                pass
+                    erKaptein = spillerListe.iat[i, 2]
 
-                        elif third == False and count == 2:
-                            try:
-                                if (bps.iat[j,0] == bps.iat[j+1,0]):
-                                    liste.append(1)
-                                elif (bps.iat[j,0] != bps.iat[j+1,0]):
-                                    liste.append(1)
-                                    third = True
-                            except:
-                                pass
+                    # sjekke kaptein
+                    if spilteIkke and erKaptein:
+                        spillerListe.loc[spillerListe['is_vice_captain'] == True, 'multiplier'] = spillerListe.iat[i, 1]
+                        spillerListe.iat[i, 1] = 0
+
+                    # keeperbytte
+                    if spillerpos == gk and spilteIkke:
+                        spillerListe.iat[i,1] = 0
+                        if not didNotPlay(keeperbytte):
+                            spillerListe.iat[i, 0], spillerListe.iat[11, 0] = spillerListe.iat[11, 0], spillerListe.iat[i, 0]
+                            spillerListe.iat[i,1] = 1
+                            countGk += 1
                         else:
-                            liste.append(0)
-                except:
-                    pass
-        try:
-            elements['bonus'] = liste
-            return elements.set_index('element', inplace=False)['bonus']
-        except:
-            return []
+                            countGk += 1
+                            
+                    # bytte fra benken
+                    if spillerpos != gk and spilteIkke:
+                        
+                        spillerListe.iat[i,1] = 0
+                        byttet = False
 
-    bonuspoints = getBonusLists()
+                        for j in range (len(spillerListe[12:15])):
+                            if didNotPlay(spillerListe[12:15].iat[j,0]):
+                                continue
+                            
+                            innbytterPos = teams.at[spillerListe[12:15].iat[j,0], 'element_type']
 
-    def getLiveBonusList(teamId):
-        picks = getAutoSubs(teamId)
-        bonusPoeng = []
-        for ids in picks['element']:
+                            if countDef >= minDef and countMid >= minMid and countAtt >= minAtt:
+                                spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0] 
+                                spillerListe.iat[i,1] = 1
+
+                                if innbytterPos == defs:
+                                    countDef += 1
+                                if innbytterPos == mids:
+                                    countMid += 1
+                                if innbytterPos == atts:
+                                    countAtt += 1
+                                byttet = True
+                                break           
+                                    
+                            if countDef < minDef and innbytterPos == defs:
+                                spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                                spillerListe.iat[i,1] = 1
+                                countDef += 1
+                                byttet = True
+                                break
+
+                            if countMid < minMid and innbytterPos == mids:
+                                spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                                spillerListe.iat[i,1] = 1
+                                countMid += 1
+                                byttet = True
+                                break
+
+                            if countAtt < minAtt and innbytterPos == atts:
+                                spillerListe.iat[i,0], spillerListe[12:15].iat[j,0] = spillerListe[12:15].iat[j,0], spillerListe.iat[i,0]
+                                spillerListe.iat[i,1] = 1
+                                countAtt += 1
+                                byttet = True
+                                break
+                            
+                        if byttet == False:
+                            if spillerpos == defs:
+                                countDef += 1
+                            if spillerpos == mids:
+                                countMid += 1
+                            if spillerpos == atts:
+                                countAtt += 1
+                            
+                return spillerListe[0:15][['element', 'multiplier']]
+        # Live bonus
+
+        def getBonusLists():
+            liste = []
+            elements = pd.DataFrame()
+            url = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
+            r = requests.get(url)
+            json = r.json()
+            fixtures_df = pd.DataFrame(json)
+            
+            now = datetime.utcnow()
+            for i in range (len(fixtures_df)):
+                gameStart = fixtures_df.at[i, 'kickoff_time']
+                gameStart = datetime.strptime(gameStart, "%Y-%m-%dT%H:%M:%SZ")
+                played60 = gameStart + timedelta(minutes = 79)
+                if now > played60:
+                    try:
+                        stats_df = pd.DataFrame(fixtures_df['stats'].iloc[i])
+                        stats_a = pd.DataFrame(stats_df.loc[9,'a'])
+                        stats_h = pd.DataFrame(stats_df.loc[9,'h'])
+                        samlet = stats_a.append(stats_h)
+                        sort = samlet.sort_values(by=['value'], ascending=False)
+                        ferdig = sort.reset_index(drop=True)
+                        bps = ferdig[0:8].copy()
+                        elements = elements.append(bps, ignore_index = True, sort = False)
+                        
+                        first = False
+                        second = False
+                        third = False
+                        count = 0
+                        for j in range(len(bps)):
+                            if first == False:
+                                try:
+                                    if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                        liste.append(3)
+                                        count += 1
+                                    elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                        liste.append(3)
+                                        count += 1
+                                        first = True
+                                except:
+                                    pass
+
+                            elif second == False and count <= 1:
+                                try:
+                                    if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                        liste.append(2)
+                                        count -= 1
+                                    elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                        liste.append(2)
+                                        count += 1
+                                        second = True
+                                except:
+                                    pass
+
+                            elif third == False and count == 2:
+                                try:
+                                    if (bps.iat[j,0] == bps.iat[j+1,0]):
+                                        liste.append(1)
+                                    elif (bps.iat[j,0] != bps.iat[j+1,0]):
+                                        liste.append(1)
+                                        third = True
+                                except:
+                                    pass
+                            else:
+                                liste.append(0)
+                    except:
+                        pass
             try:
-                bonusPoeng.append(sum(bonuspoints.at[ids]))
+                elements['bonus'] = liste
+                return elements.set_index('element', inplace=False)['bonus']
+            except:
+                return []
+
+        bonuspoints = getBonusLists()
+
+        def getLiveBonusList(teamId):
+            picks = getAutoSubs(teamId)
+            bonusPoeng = []
+            for ids in picks['element']:
+                try:
+                    bonusPoeng.append(sum(bonuspoints.at[ids]))
+                except:
+                    try:
+                        bonusPoeng.append(bonuspoints.at[ids])
+                    except:
+                        bonusPoeng.append(0)
+                
+            return bonusPoeng
+
+        def getAllPlayerList():
+            url = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
+            r = requests.get(url)
+            json = r.json()
+            liveElements_df = pd.DataFrame(json['elements'])
+            liveId = liveElements_df['id']
+            stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
+            liveTotPoints_df = pd.DataFrame(stats_df[['total_points', 'bonus']])
+            liveTotPoints_df.insert(0,'id', liveId, True)
+            return liveTotPoints_df
+
+        liveTotPoints = getAllPlayerList()
+
+        def getLivePlayerPoints(teamId):
+            slim_picks = getAutoSubs(teamId)
+            
+            slim_picks['live_bonus'] = getLiveBonusList(teamId)
+            
+            poeng = 0
+            for i in range(len(slim_picks)):
+                tempId = slim_picks.iat[i,0]
+                poeng += (liveTotPoints.iat[tempId - 1, 1] + slim_picks.iat[i, 2] - 
+                        liveTotPoints.iat[tempId - 1, 2]) * slim_picks.iat[i, 1] 
+                
+            return poeng    
+
+        def getGwRoundPoints(teamId):
+            url = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/history/'
+            r = requests.get(url)
+            json = r.json()
+            teamPoints_df = pd.DataFrame(json['current'])
+            
+            livePlayerPoints = getLivePlayerPoints(teamId) 
+            
+            livePlayerPoints_trans = livePlayerPoints - teamPoints_df['event_transfers_cost'][thisGw-1]
+            
+            if thisGw == 1:
+                
+                liveRound = livePlayerPoints_trans
+                liveTotal = livePlayerPoints_trans
+            if thisGw == 2 or 3 or 4:
+                liveRound = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
+
+                liveTotal = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
+
+            if thisGw > 4:
+
+                liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
+                teamPoints_df['total_points'][(gws - 2)]) + livePlayerPoints_trans
+
+                liveTotal = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
+
+            return [liveTotal, livePlayerPoints_trans, liveRound]
+
+        def getTeamsPoints():
+            tabell = []
+            for team in teamsList['entry']:
+                tabell.append(getGwRoundPoints(team))
+            
+            tabell_df = pd.DataFrame(tabell)
+            ny_tabell = tabell_df.rename(columns={0: "Total", 1: "GWLive", 2: "Round"})
+            return ny_tabell
+
+        def getTabell():
+            url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+            r2 = requests.get(url2)
+            json2 = r2.json()
+            standings_df = pd.DataFrame(json2['standings'])
+            league_df = pd.DataFrame(standings_df['results'].values.tolist())
+
+            tabell = getTeamsPoints()
+            
+            tabell.insert(0, 'Navn', league_df[['player_name']], True)
+            tabell['entry'] = teamsList['entry']
+
+            tabellSort = tabell.sort_values ('Round', ascending=False)
+            tabellSort.insert(0, "#", range(1, len(tabell) + 1), True)
+            tabellSort.columns = ['Rank', 'Navn', 'Tot', 'GW', 'GWround', 'Entry']
+            
+            return tabellSort
+        
+        def getCap(playerId):
+            url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
+            r2 = requests.get(url2)
+            picks = r2.json()['picks']
+
+            for pick in picks:
+                if pick['is_captain']:
+                    return getPlayerName(pick['element'])
+
+        def getChip(playerId):
+            url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
+            r2 = requests.get(url2)
+            activeChip = r2.json()
+            if activeChip['active_chip'] == 'bboost':
+                return 'Bench Boost'
+            elif activeChip['active_chip'] == '3xc':
+                return 'Triple Cap'
+            elif activeChip['active_chip'] == 'freehit':
+                return 'Free Hit'
+            elif activeChip['active_chip'] == 'wildcard':
+                return 'Wildcard'
+            else:
+                return ''
+
+        def hasPlayed(playerId):
+            teamId = teams.at[playerId, 'team']
+            try:
+                return all(allFix.at[teamId, 'finished_provisional'])
             except:
                 try:
-                    bonusPoeng.append(bonuspoints.at[ids])
+                    return allFix.at[teamId, 'finished_provisional']
                 except:
-                    bonusPoeng.append(0)
-            
-        return bonusPoeng
-
-    def getAllPlayerList():
-        url = 'https://fantasy.premierleague.com/api/event/' + str(thisGw) + '/live/'
-        r = requests.get(url)
-        json = r.json()
-        liveElements_df = pd.DataFrame(json['elements'])
-        liveId = liveElements_df['id']
-        stats_df = pd.DataFrame(liveElements_df['stats'].values.tolist())
-        liveTotPoints_df = pd.DataFrame(stats_df[['total_points', 'bonus']])
-        liveTotPoints_df.insert(0,'id', liveId, True)
-        return liveTotPoints_df
-
-    liveTotPoints = getAllPlayerList()
-
-    def getLivePlayerPoints(teamId):
-        slim_picks = getAutoSubs(teamId)
+                    return True
         
-        slim_picks['live_bonus'] = getLiveBonusList(teamId)
+        def countFinishedPlayers(teamId):
+            total = 0
+            finished = 0
+            picks = getAutoSubs(teamId)
+            if getChip(teamId) == 'Bench Boost':
+                for pick in picks['element']:
+                    if hasPlayed(pick):
+                        finished += 1
+                total = 15
+            else:
+                for pick in picks['element'][0:11]:
+                    if hasPlayed(pick):
+                        finished += 1
+                total = 11        
+            return str(finished) + ' / ' + str(total)
+
+        data = getTabell()
+        gwHead = gwHeader()
+
+        data = data.to_dict(orient='records')
+
+        def formatScore(score):
+            return "{:,}".format(score)
         
-        poeng = 0
-        for i in range(len(slim_picks)):
-            tempId = slim_picks.iat[i,0]
-            poeng += (liveTotPoints.iat[tempId - 1, 1] + slim_picks.iat[i, 2] - 
-                    liveTotPoints.iat[tempId - 1, 2]) * slim_picks.iat[i, 1] 
-            
-        return poeng    
-
-    def getGwRoundPoints(teamId):
-        url = 'https://fantasy.premierleague.com/api/entry/' + str(teamId) + '/history/'
-        r = requests.get(url)
-        json = r.json()
-        teamPoints_df = pd.DataFrame(json['current'])
+        result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap,
+            countFinishedPlayers = countFinishedPlayers, formatScore = formatScore)
         
-        livePlayerPoints = getLivePlayerPoints(teamId) 
-        
-        livePlayerPoints_trans = livePlayerPoints - teamPoints_df['event_transfers_cost'][thisGw-1]
-        
-        if thisGw == 1:
-            
-            liveRound = livePlayerPoints_trans
-            liveTotal = livePlayerPoints_trans
-        if thisGw == 2 or 3 or 4:
-            liveRound = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
-
-            liveTotal = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
-
-        if thisGw > 4:
-
-            liveRound = (teamPoints_df['total_points'][(thisGw - 2)] - 
-            teamPoints_df['total_points'][(gws - 2)]) + livePlayerPoints_trans
-
-            liveTotal = teamPoints_df['total_points'][(thisGw - 2)] + livePlayerPoints_trans
-
-        return [liveTotal, livePlayerPoints_trans, liveRound]
-
-    def getTeamsPoints():
-        tabell = []
-        for team in teamsList['entry']:
-            tabell.append(getGwRoundPoints(team))
-        
-        tabell_df = pd.DataFrame(tabell)
-        ny_tabell = tabell_df.rename(columns={0: "Total", 1: "GWLive", 2: "Round"})
-        return ny_tabell
-
-    def getTabell():
-        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
-        r2 = requests.get(url2)
-        json2 = r2.json()
-        standings_df = pd.DataFrame(json2['standings'])
-        league_df = pd.DataFrame(standings_df['results'].values.tolist())
-
-        tabell = getTeamsPoints()
-        
-        tabell.insert(0, 'Navn', league_df[['player_name']], True)
-        tabell['entry'] = teamsList['entry']
-
-        tabellSort = tabell.sort_values ('Round', ascending=False)
-        tabellSort.insert(0, "#", range(1, len(tabell) + 1), True)
-        tabellSort.columns = ['Rank', 'Navn', 'Tot', 'GW', 'GWround', 'Entry']
-        
-        return tabellSort
-    
-    def getCap(playerId):
-        url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
-        r2 = requests.get(url2)
-        picks = r2.json()['picks']
-
-        for pick in picks:
-            if pick['is_captain']:
-                return getPlayerName(pick['element'])
-
-    def getChip(playerId):
-        url2 = 'https://fantasy.premierleague.com/api/entry/' + str(playerId)+ '/event/' + str(thisGw) + '/picks/'
-        r2 = requests.get(url2)
-        activeChip = r2.json()
-        if activeChip['active_chip'] == 'bboost':
-            return 'Bench Boost'
-        elif activeChip['active_chip'] == '3xc':
-            return 'Triple Cap'
-        elif activeChip['active_chip'] == 'freehit':
-            return 'Free Hit'
-        elif activeChip['active_chip'] == 'wildcard':
-            return 'Wildcard'
-        else:
-            return ''
-
-    def hasPlayed(playerId):
-        teamId = teams.at[playerId, 'team']
-        try:
-            return all(allFix.at[teamId, 'finished_provisional'])
-        except:
-            try:
-                return allFix.at[teamId, 'finished_provisional']
-            except:
-                return True
-    
-    def countFinishedPlayers(teamId):
-        total = 0
-        finished = 0
-        picks = getAutoSubs(teamId)
-        if getChip(teamId) == 'Bench Boost':
-            for pick in picks['element']:
-                if hasPlayed(pick):
-                    finished += 1
-            total = 15
-        else:
-            for pick in picks['element'][0:11]:
-                if hasPlayed(pick):
-                    finished += 1
-            total = 11        
-        return str(finished) + ' / ' + str(total)
-
-    data = getTabell()
-    gwHead = gwHeader()
-
-    data = data.to_dict(orient='records')
-
-    def formatScore(score):
-        return "{:,}".format(score)
-    
-    result = render_template('main_page.html', data=data, gwHead = gwHead, thisGw = thisGw, getChip = getChip, getCap = getCap,
-        countFinishedPlayers = countFinishedPlayers, formatScore = formatScore)
-    
-    return result
-
+        return result
+    except:
+        result = render_template('updating.html')
+        return result
 @app.route("/winners")
 def vinnere():
     # Rundevinnere
