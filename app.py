@@ -546,6 +546,8 @@ def vinnere():
 
 @app.route("/<lagId>")
 def lag(lagId):
+    teams = getBootstrapTeams()
+    names = getBootstrapNames()
     def checkGameweek():
         url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
         r3 = requests.get(url3)
