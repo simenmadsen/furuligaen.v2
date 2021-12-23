@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-from numpy import empty
 import pandas as pd
 import requests
 from datetime import timedelta, datetime
@@ -78,10 +77,10 @@ def index():
 
         def getGwStart():
             gw = thisGw
-            liste = [5, 9, 13, 17, 21, 25, 29, 33]
+            liste = [9, 17, 25, 33]
             for obj in liste:
                 if gw < obj:
-                    return obj - 4 
+                    return obj - 8
             else:
                 return 33     
 
@@ -92,7 +91,7 @@ def index():
             if gw == 33:
                 return 38
             else:
-                return gw + 3
+                return gw + 7
 
         # For header i tabell
         def gwHeader():
@@ -508,7 +507,7 @@ def vinnere():
         for i in range (len(teamsList)):
             url = 'https://fantasy.premierleague.com/api/entry/' + str(teamsList.at[i,'entry']) + '/history/'
             teamPoints = requests.get(url).json()['current']
-            if roundEnd == 4:
+            if roundEnd == 8:
                 if high < teamPoints[roundEnd - 1]['total_points']:
                     result = (teamPoints[roundEnd - 1]['total_points'], teamsList.at[i,'player_name'])
                     high = teamPoints[roundEnd - 1]['total_points']
@@ -522,11 +521,10 @@ def vinnere():
     def getWinners():
         url = 'https://fantasy.premierleague.com/api/bootstrap-static/'
         events = requests.get(url).json()['events']
-        nyRunde = [(1,4), (5,8), (9,12), (13,16), (17,20), (21,24), (25,28), (29,32), (33,38)]
+        nyRunde = [(1,8), (9,16), (17,24), (25,32), (33,38)]
         result = []
         i = 0
-        gwIntervall = ["1 → 4", "5 → 8", "9 → 12", "13 → 16", "17 → 20",
-        "21 → 24", "25 → 28", "29 → 32", "33 → 38"]
+        gwIntervall = ["1 → 8", "9 → 16", "17 → 24", "25 → 32", "33 → 38"]
         for rndS, rndE in nyRunde:
             if events[rndE - 1]['data_checked']:
                 rundevinnere = getRoundWinners(rndS, rndE)
