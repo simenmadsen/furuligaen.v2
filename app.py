@@ -12,7 +12,7 @@ def getPlayerName(playerID):
 
 def getTeamList():
     try:
-        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+        url2 = 'https://fantasy.premierleague.com/api/leagues-classic/448728/standings/'
         r2 = requests.get(url2)
         json2 = r2.json()
         standings_df = pd.DataFrame(json2['standings'])
@@ -21,7 +21,7 @@ def getTeamList():
     except:
         return None
 def getNewEntries():
-        url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+        url = 'https://fantasy.premierleague.com/api/leagues-classic/448728/standings/'
         r = requests.get(url).json()
         return r['new_entries']['results'] 
 
@@ -58,7 +58,7 @@ def index():
     try:
         teamsList = getTeamList()
         #checks if FPL has started
-        url = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+        url = 'https://fantasy.premierleague.com/api/leagues-classic/448728/standings/'
         r = requests.get(url).json()
         if not r['standings']['results']:
             data = getNewEntries()
@@ -417,7 +417,7 @@ def index():
             return ny_tabell
 
         def getTabell():
-            url2 = 'https://fantasy.premierleague.com/api/leagues-classic/173312/standings/'
+            url2 = 'https://fantasy.premierleague.com/api/leagues-classic/448728/standings/'
             r2 = requests.get(url2)
             json2 = r2.json()
             standings_df = pd.DataFrame(json2['standings'])

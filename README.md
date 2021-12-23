@@ -1,1 +1,1 @@
-# furuligaen-beta
+# pwfantasy-beta
