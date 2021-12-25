@@ -2,8 +2,9 @@ from flask import Flask, render_template
 import pandas as pd
 import requests
 from datetime import timedelta, datetime
-import time
 
+import fixtures
+import transfers
 
 app = Flask(__name__)
 def getPlayerName(playerID):
@@ -19,6 +20,7 @@ def getTeamList():
         return league_df [['entry', 'player_name']]
     except:
         return None
+
 def getNewEntries():
         url = 'https://fantasy.premierleague.com/api/leagues-classic/448728/standings/'
         r = requests.get(url).json()
@@ -537,7 +539,7 @@ def vinnere():
         return result
 
     data = getWinners()
-    
+
     result = render_template('vinnere.html', data = data)
 
     return result
@@ -999,111 +1001,12 @@ def lag(lagId):
     return result
 
 @app.route("/transfers")
-def transfers():
-    def checkGameweek():
-        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
-        r3 = requests.get(url3)
-        json = r3.json()
-        gameweek_df = pd.DataFrame(json['events'])
-        iscurrent = gameweek_df[['id', 'is_current']]
-        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
-        return currentGw
-    
-    thisGw = checkGameweek()
-    
-    def getManagerName(lag):
-        for i in range (len(teamsList['entry'])):
-            if (teamsList['entry'][i] == int(lag)):
-                return teamsList['player_name'][i]
-
-    def getPlayerName(playerID):
-        return names.at[playerID, 'web_name']
-    
-    def getPlayerPhoto(playerID):
-        return names.at[playerID, 'code']
-
-    def getPlayerTrans(teamId):
-        url = 'https://fantasy.premierleague.com/api/entry/'+ str(teamId) +'/transfers/'
-        trans = requests.get(url).json()
-        transfers = []
-        navn = {
-            'entry': teamId, 
-            'transfers':transfers
-            }
-        
-        for obj in trans:
-            if obj['event'] == thisGw:
-                transfers.append({ 
-                            'element_in': getPlayerName(obj['element_in']), 
-                            'element_out': getPlayerName(obj['element_out']),
-                            'photo_in': getPlayerPhoto(obj['element_in']),
-                            'photo_out': getPlayerPhoto(obj['element_out'])
-                            })
-        if not transfers:
-            return None
-        else:
-            return navn
-        
-    def getAllTransfers():
-        transfers = []
-        for teamId in teamsList['entry']:
-            obj = getPlayerTrans(teamId)
-            if obj != None:
-                transfers.append(obj)
-        return transfers
-
-    data = getAllTransfers()
-
-    result = render_template('transfers.html', data = data, getManagerName = getManagerName)
-
-    return result
+def transfer():
+    return transfers.transfers()
 
 @app.route("/fixtures")
-def fixtures():
-    def getTeamInfo():
-        url4 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
-        r4 = requests.get(url4)
-        teams = r4.json()['teams']
-        return teams
-    
-    def checkGameweek():
-        url3 = 'https://fantasy.premierleague.com/api/bootstrap-static/'
-        r3 = requests.get(url3)
-        json = r3.json()
-        gameweek_df = pd.DataFrame(json['events'])
-        iscurrent = gameweek_df[['id', 'is_current']]
-        currentGw = iscurrent.loc[(iscurrent.is_current == True)].iat[0,0]
-        return currentGw
-    
-    teams = getTeamInfo()
-    thisGw = checkGameweek()
-
-    def getTeamName(teamId):
-        for team in teams:
-            if team['id'] == teamId:
-                return team["short_name"]
-    
-    def getTeamLogo(teamId):
-        for team in teams:
-            if team['id'] == teamId:
-                return team['code']
-
-    def getFixtures():
-        url = 'https://fantasy.premierleague.com/api/fixtures/?event=' + str(thisGw)
-        fixtures = requests.get(url).json()
-        return fixtures;
-    
-    def dateAndTime(utc_datetime):
-        utc_datetime = datetime.strptime(utc_datetime, "%Y-%m-%dT%H:%M:%SZ")
-        now_timestamp = time.time()
-        offset = datetime.fromtimestamp(now_timestamp) - datetime.utcfromtimestamp(now_timestamp)
-        result = utc_datetime + offset
-        return result.strftime('%A %H:%M')
-
-    result = render_template('fixtures.html', fixtures = getFixtures(), getTeamName = getTeamName, getTeamLogo = getTeamLogo,
-    dateAndTime = dateAndTime, thisGw = thisGw)
-
-    return result
+def fixture():
+    return fixtures.fixtures()
 
 if __name__ == '__main__':
     app.debug = True
